@@ -223,7 +223,7 @@ struct literal_node {
             if (
                 !std::exchange(first, false)
                 && p->as_string_view().starts_with("\"")
-                )
+                ) 
             {
                 ret += " ";
             }
@@ -2928,7 +2928,7 @@ struct parameter_declaration_list_node
 
     std::vector<std::unique_ptr<parameter_declaration_node>> parameters;
 
-    parameter_declaration_list_node(bool f = false, bool t = false, bool s = false)
+    parameter_declaration_list_node(bool f = false, bool t = false, bool s = false) 
         : in_function_typeid{f}
         , in_template_param_list{t}
         , in_statement_param_list{s}
@@ -3067,7 +3067,7 @@ struct function_type_node
         assert (parameters);
 
         auto ret = parameters->to_string();
-
+        
         if (throws) {
             ret += " throws";
         }
@@ -6613,7 +6613,7 @@ public:
     //
     //  errors      error list
     //
-    parser(
+    parser( 
         std::vector<error_entry>& errors_,
         std::set<std::string>&    includes_,
         std::vector<std::string>& extra_cpp1_,
@@ -7106,9 +7106,9 @@ private:
                 //  Next should be an expression-list followed by a ')'
                 //  If not, then this wasn't a call expression so backtrack to
                 //  the '(' which will be part of the next grammar production
-            is_inside_call_expr = true;
+		        is_inside_call_expr = true;
                 term.expr_list = expression_list(term.op, lexeme::RightParen);
-            is_inside_call_expr = false;
+		        is_inside_call_expr = false;
 
                 if (
                     term.expr_list
@@ -7137,7 +7137,7 @@ private:
                 }
             }
             else if (
-                (
+                ( 
                     term.op->type() == lexeme::EllipsisLess
                     || term.op->type() == lexeme::EllipsisEqual
                     )
@@ -8058,7 +8058,7 @@ private:
 
         n->ids.push_back( std::move(term) );
 
-        for (
+        for ( 
             auto first_time_through_loop = true;
             curr().type() == lexeme::Scope;
             first_time_through_loop = false
@@ -8077,7 +8077,7 @@ private:
                 && first_uid_was_std
                 && term.scope_op->type() == lexeme::Scope
                 && *term.id->identifier == "forward"
-                )
+                ) 
             {
                 error("std::forward is not needed in Cpp2 - use 'forward' parameters/arguments instead", false);
                 return {};
@@ -8740,7 +8740,7 @@ private:
         }
 
         if (
-            peek(1)
+            peek(1) 
             && *peek(1) == "namespace"
             )
         {

@@ -681,7 +681,7 @@ class cmdline_processor
 
 public:
     auto flags_starting_with(
-        std::string_view s,
+        std::string_view s, 
         bool             indicate_short_name = true
     )
         -> std::vector<std::string>
