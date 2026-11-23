@@ -1,0 +1,12 @@
+//  Module internal partition: 'module name:partition;'
+//  Nothing here is exported; the primary interface imports it
+//  with 'import :detail;' and uses it in its own definitions.
+
+module shapes:detail;
+
+clamp_to_zero: (v: double) -> double = {
+    if v < 0.0 {
+        return 0.0;
+    }
+    return v;
+}

@@ -1,0 +1,16 @@
+//  Module interface partition: 'export module name:partition;'
+//  The primary interface (pure2-module-interface.cpp2) re-exports it
+//  with 'export import :geometry;'.
+
+export module shapes:geometry;
+
+export point: @struct type = {
+    x: double;
+    y: double;
+}
+
+export distance_squared: (a: point, b: point) -> double = {
+    dx := b.x - a.x;
+    dy := b.y - a.y;
+    return dx * dx + dy * dy;
+}

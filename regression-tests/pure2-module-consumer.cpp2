@@ -1,0 +1,27 @@
+//  Imports the 'shapes' module built from the pure2-module-*.cpp2 units
+//  and uses each kind of exported declaration.
+
+import shapes;
+
+main: () = {
+    r: rectangle = (3.0, -4.0);
+    std::cout << "area (negative side clamped): (r.area())$\n";
+    std::cout << "square area: (square_area(5.0))$\n";
+    std::cout << "sides of a square: (sides_of_square)$\n";
+    std::cout << "larger: (larger(3, 7))$ (larger(std::string(\"pear\"), std::string(\"apple\")))$\n";
+
+    item: labeled<int> = ("count", 42);
+    std::cout << "labeled: (item.label)$ = (item.value)$\n";
+
+    std::cout << "inches in 3 feet: (units::to_inches(3))$\n";
+
+    c := color::green;
+    std::cout << "color: (c.to_string())$\n";
+
+    a: point = (0.0, 0.0);
+    b: point = (3.0, 4.0);
+    std::cout << "distance squared: (distance_squared(a, b))$\n";
+
+    name: text::string_view = "shapes";
+    std::cout << "module: (name)$\n";
+}

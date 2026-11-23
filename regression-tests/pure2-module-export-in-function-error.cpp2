@@ -1,0 +1,6 @@
+export module export_in_function;
+
+export f: () -> int = {
+    export x: int = 1;
+    return x;
+}

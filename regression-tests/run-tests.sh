@@ -301,7 +301,14 @@ for test_file in $tests; do
 
     ########
     # Check the generated code
-    if [ -f "$expected_src" ]; then
+    if [[ -f "$expected_src" && $test_name == *"-module-"* ]]; then
+        # A module test is one unit of a multi-file module (or a program that
+        # imports it), so it can't be compiled on its own here;
+        # build-module-tests.ps1 builds the units together
+        check_file "$expected_src" "generated Cpp1 file"
+        echo "        Skipping compilation of a module test (see build-module-tests.ps1)"
+        compilation_result=0
+    elif [ -f "$expected_src" ]; then
         # The file was generated, so it should be tracked by git
         check_file "$expected_src" "generated Cpp1 file"
         ########

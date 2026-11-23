@@ -1,0 +1,56 @@
+//  Primary module interface unit: 'export module name;'
+//  Exports each kind of declaration Cpp2 can write at namespace scope,
+//  re-exports a partition, and keeps a helper private to the module.
+
+export module shapes;
+export import :geometry;
+import :detail;
+
+//  Not exported: has module linkage, so importers can't see it
+square: (x: double) -> double = x * x;
+
+export length: type == double;
+
+export sides_of_square: i32 == 4;
+
+export color: @enum type = {
+    red;
+    green;
+    blue;
+}
+
+export rectangle: type = {
+    public width:  length = 0.0;
+    public height: length = 0.0;
+
+    operator=: (out this, w: length, h: length) = {
+        width  = clamp_to_zero(w);
+        height = clamp_to_zero(h);
+    }
+
+    area: (this) -> length = width * height;
+}
+
+export square_area: (side: length) -> length = square(side);
+
+export larger: <T> (a: T, b: T) -> T = {
+    if a < b {
+        return b;
+    }
+    return a;
+}
+
+export labeled: @struct <T> type = {
+    label: std::string;
+    value: T;
+}
+
+export units: namespace = {
+    inches_per_foot: i32 == 12;
+    to_inches: (feet: i32) -> i32 = feet * inches_per_foot;
+}
+
+//  'export using' is a statement, so it goes inside a namespace body
+text: namespace = {
+    export using std::string_view;
+}

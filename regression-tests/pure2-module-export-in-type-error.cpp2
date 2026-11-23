@@ -1,0 +1,5 @@
+export module export_in_type;
+
+export widget: type = {
+    export size: (this) -> int = 0;
+}

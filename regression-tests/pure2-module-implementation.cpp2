@@ -1,0 +1,9 @@
+//  Module implementation unit: 'module name;'
+//  It implicitly imports the primary interface, so it can use its
+//  declarations, including the non-exported ones.
+
+module shapes;
+
+perimeter: (r: rectangle) -> length = 2.0 * (r.width + r.height);
+
+diagonal_squared: (r: rectangle) -> length = square(r.width) + square(r.height);

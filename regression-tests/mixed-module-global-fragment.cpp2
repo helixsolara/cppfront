@@ -1,0 +1,11 @@
+//  A module unit with an explicit global module fragment: 'module;'
+//  followed by #includes. cppfront puts its own prolog after the
+//  user's 'module;' instead of emitting one of its own.
+
+module;
+#include <cstdio>
+export module mixed_fragment;
+
+export twice: (x: int) -> int = 2 * x;
+
+export void print_twice(int x) { std::printf("%d\n", twice(x)); }

@@ -1,0 +1,7 @@
+export module export_block;
+
+f: () -> int = 1;
+
+export {
+    g: () -> int = 2;
+}
