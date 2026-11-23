@@ -1,4 +1,6 @@
 #!/bin/bash
+# Modified in the helixsolara/cppfront fork: module tests are transpiled but not compiled here
+# (build-module-tests.ps1 builds them).
 
 ################
 usage() {
