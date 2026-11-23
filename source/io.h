@@ -853,7 +853,6 @@ class source
     std::vector<source_line>  lines;
     std::ptrdiff_t            module_lines           = 0;
     bool                      module_directive_found = false;
-    bool                      is_module_cpp2_util_   = false;
     bool                      cpp1_found             = false;
     bool                      cpp2_found             = false;
 
@@ -883,14 +882,6 @@ public:
     //
     auto is_module() const -> bool {
         return module_lines != 0;
-    }
-
-
-    //-----------------------------------------------------------------------
-    //  is_module_cpp2_util: Returns true if this file is  the module 'cpp2.util'.
-    //
-    auto is_module_cpp2_util() const -> bool {
-        return is_module_cpp2_util_;
     }
 
 
@@ -1056,7 +1047,6 @@ public:
                     ) {
                         lines.back().cat = source_line::category::module_declaration;
                         module_lines = std::ssize(lines);
-                        is_module_cpp2_util_ = lines.back().text == "export module cpp2.util;";
                     }
                     else if (starts_with_import(lines.back().text)) {
                         lines.back().cat = source_line::category::import;

@@ -94,14 +94,6 @@ static cmdline_processor::register_flag cmd_line_paths(
     [] { flag_line_paths = true; }
 );
 
-static auto flag_import_cpp2_util = false;
-static cmdline_processor::register_flag cmd_import_cpp2_util(
-    9,
-    "import-cpp2-util",
-    "Imports all cpp2:: via 'import cpp2.util;' - '#include's the preprocessor parts",
-    []{ flag_import_cpp2_util = true; }
-);
-
 static auto flag_import_std = false;
 static cmdline_processor::register_flag cmd_import_std(
     0,
@@ -1361,19 +1353,12 @@ public:
 
         auto print_cpp2util = [&]() {
             if (
-                !source.is_module_cpp2_util()
-                && (
-                    !tokens.get_map().empty()
-                    || flag_import_std
-                    || flag_include_std
-                    )
+                !tokens.get_map().empty()
+                || flag_import_std
+                || flag_include_std
                 )
             {
-                if (flag_import_cpp2_util) {
-                    printer.print_extra( "\n#include \"cpp2util_pre.h\"\n\n" );
-                } else {
-                    printer.print_extra( "\n#include \"cpp2util.h\"\n\n" );
-                }
+                printer.print_extra( "\n#include \"cpp2util.h\"\n\n" );
             }
         };
 
@@ -1503,14 +1488,6 @@ public:
                 }
             }
             ++curr_lineno;
-        }
-        if (
-            flag_import_cpp2_util
-            && source.has_cpp2()
-            && !source.is_module_cpp2_util()
-            )
-        {
-            printer.print_extra( "\nimport cpp2.util;\n\n" );
         }
 
         auto map_iter = tokens.get_map().cbegin();
