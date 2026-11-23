@@ -1,0 +1,8 @@
+//  A module unit with no Cpp2 lines: the error must name line 8,
+//  not a line counted from the end of the module lines.
+
+export module cpp1_only;
+
+import std;
+
+export int f() { return 1; }

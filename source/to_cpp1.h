@@ -1337,6 +1337,9 @@ public:
         }
 
         lineno_t curr_lineno = 0;
+        //  Subtracted from curr_lineno only for the printer's position (see
+        //  where it is set); errors keep reporting curr_lineno, the real line
+        lineno_t printer_lineno_offset = 0;
         auto hpp_includes = std::string{};
 
         auto print_cpp2util_prolog = [&]() {
@@ -1421,11 +1424,11 @@ public:
             {
                 //  Strip off the 2"
                 auto h_include = line.text.substr(0, line.text.size()-2);
-                printer.print_cpp1( h_include + "\"", curr_lineno );
+                printer.print_cpp1( h_include + "\"", curr_lineno - printer_lineno_offset );
                 hpp_includes += h_include + "pp\"\n";
             }
             else if (line.cat != source_line::category::preprocessor_was_emitted) {
-                printer.print_cpp1( line.text, curr_lineno );
+                printer.print_cpp1( line.text, curr_lineno - printer_lineno_offset );
             }
             return true;
         };
@@ -1569,7 +1572,10 @@ public:
             && source.is_module()
             )
         {
-            curr_lineno -= unchecked_narrow<int>(std::ssize(source.get_module_lines()) - 1);
+            //  A file without Cpp2 is passed through without #line directives,
+            //  and the printer's line count restarts in this phase, so number
+            //  the remaining lines for the printer from the end of the module lines
+            printer_lineno_offset = unchecked_narrow<int>(std::ssize(source.get_module_lines()) - 1);
         }
 
         assert (printer.get_phase() == positional_printer::phase1_type_defs_func_decls);

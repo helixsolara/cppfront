@@ -1,0 +1,3 @@
+pure2-module-cpp1-only-error.cpp2...
+pure2-module-cpp1-only-error.cpp2(8,1): error: pure-cpp2 switch disables Cpp1 syntax
+
