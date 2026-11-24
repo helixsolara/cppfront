@@ -2,7 +2,8 @@
 //  Copyright 2022-2026 Herb Sutter
 //  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //  Modified in the helixsolara/cppfront fork to allow authoring C++20 module units,
-//  and to pass bytes above 127 safely to the <cctype> classifiers.
+//  to pass bytes above 127 safely to the <cctype> classifiers, and to drop
+//  strip_path, which error messages no longer use.
 //  
 //  Part of the Cppfront Project, under the Apache License v2.0 with LLVM Exceptions.
 //  See https://github.com/hsutter/cppfront/blob/main/LICENSE for license information.
@@ -447,23 +448,6 @@ auto _as(auto x)
     return T(x);
 }
 
-
-//  String path prefix from filename
-//
-auto strip_path(std::string const& file)
-    -> std::string
-{
-    auto i = std::ssize(file)-1;
-    while (
-        i >= 0
-        && file[i] != '\\'
-        && file[i] != '/'
-        )
-    {
-        --i;
-    }
-    return {file, _as<size_t>(i+1)};
-}
 
 
 //-----------------------------------------------------------------------

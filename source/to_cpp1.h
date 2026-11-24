@@ -2,7 +2,8 @@
 //  Copyright 2022-2026 Herb Sutter
 //  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //  Modified in the helixsolara/cppfront fork to allow authoring C++20 module units,
-//  and to pass bytes above 127 safely to the <cctype> classifiers.
+//  to pass bytes above 127 safely to the <cctype> classifiers, and to name the
+//  source file in error messages by the path it was given.
 //  
 //  Part of the Cppfront Project, under the Apache License v2.0 with LLVM Exceptions.
 //  See https://github.com/hsutter/cppfront/blob/main/LICENSE for license information.
@@ -7286,7 +7287,10 @@ public:
                 || error != *prev
                 )
             {
-                error.print(std::cerr, strip_path(sourcefile));
+                //  The path as given, not just the file name, so an IDE can
+                //  open the file even when cppfront runs in another folder
+                //  (as build systems run it, in the output folder)
+                error.print(std::cerr, sourcefile);
             }
             prev = &error;
         }
