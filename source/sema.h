@@ -1,7 +1,8 @@
 
 //  Copyright 2022-2026 Herb Sutter
 //  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
-//  Modified in the helixsolara/cppfront fork to allow authoring C++20 module units.
+//  Modified in the helixsolara/cppfront fork (github.com/helixsolara/cppfront,
+//  branch ena/modules); its commit history says what changed.
 //  
 //  Part of the Cppfront Project, under the Apache License v2.0 with LLVM Exceptions.
 //  See https://github.com/hsutter/cppfront/blob/main/LICENSE for license information.
