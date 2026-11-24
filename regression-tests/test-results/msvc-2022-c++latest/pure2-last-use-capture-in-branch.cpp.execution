@@ -1,0 +1,13 @@
+a, first: 1
+a, second: 2
+b, first: 10
+b, second: 11
+c, first: 20
+c, second: 21
+d, first: 30
+d, second: 31
+f, first: 50
+f, second: 100
+g, after a loop: 180
+e, in the other branch: 41
+e, first: 40

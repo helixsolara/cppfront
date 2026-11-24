@@ -1,0 +1,77 @@
+//  A capture happens when its function expression is evaluated, wherever the
+//  captured name appears in the function expression's body. So a capture that
+//  appears inside a branch of a later function expression still follows every
+//  earlier capture, and only the last capture moves
+
+check: (name: std::string_view, f: std::function<() -> int>) =
+{
+    std::cout << name << ": " << f() << "\n";
+}
+
+main: (args) =
+{
+    //  True, but not known to be at compile time
+    yes := args.size() < 100u;
+    no := !yes;
+
+    //  The later capture is inside an 'if' in its function expression
+    a := std::make_shared<int>(1);
+    first_a := :() -> int = a$*;
+    second_a := :() -> int = { if yes$ { return a$* + 1; } return 0; };
+    check("a, first", first_a);
+    check("a, second", second_a);
+
+    //  ... inside an 'else'
+    b := std::make_shared<int>(10);
+    first_b := :() -> int = b$*;
+    second_b := :() -> int = { if no$ { return 0; } else { return b$* + 1; } };
+    check("b, first", first_b);
+    check("b, second", second_b);
+
+    //  ... inside a nested block
+    c := std::make_shared<int>(20);
+    first_c := :() -> int = c$*;
+    second_c := :() -> int = { { return c$* + 1; } };
+    check("c, first", first_c);
+    check("c, second", second_c);
+
+    //  ... and the earlier capture is inside a branch too
+    d := std::make_shared<int>(30);
+    first_d := :() -> int = { if yes$ { return d$*; } return 0; };
+    second_d := :() -> int = { if yes$ { return d$* + 1; } return 0; };
+    check("d, first", first_d);
+    check("d, second", second_d);
+
+    //  ... inside a loop in its function expression
+    f := std::make_shared<int>(50);
+    first_f := :() -> int = f$*;
+    second_f := :() -> int = { sum := 0; count := 0; while count < 2 next count++ { sum += f$*; } return sum; };
+    check("f, first", first_f);
+    check("f, second", second_f);
+
+    //  An earlier use in a loop of the enclosing function isn't a last use;
+    //  the capture after it is
+    g := std::make_shared<int>(60);
+    total := 0;
+    round := 0;
+    while round < 2 next round++
+    {
+        total += g*;
+    }
+    second_g := :() -> int = { if yes$ { return g$* + total$; } return 0; };
+    check("g, after a loop", second_g);
+
+    //  A function expression in a branch of the enclosing function still
+    //  makes a use in that branch, after an earlier capture outside it
+    e := std::make_shared<int>(40);
+    first_e := :() -> int = e$*;
+    if no
+    {
+        check("e, in a branch", :() -> int = e$*;);
+    }
+    else
+    {
+        check("e, in the other branch", :() -> int = { if yes$ { return e$* + 1; } return 0; });
+    }
+    check("e, first", first_e);
+}

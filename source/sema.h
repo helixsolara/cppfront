@@ -806,6 +806,17 @@ private:
         //    - Where id is hidden by another declaration
         auto pos_ranges = std::vector<pos_range>{{false, 0}}; // Keep sentinel for simpler code
 
+        //  A capture is evaluated where its function expression is, not where
+        //  the captured name appears in the function expression's body (which
+        //  may be inside a branch there), so map each captured use to the
+        //  position of its function expression
+        struct capture_pos
+        {
+            int use;
+            int function_expression;
+        };
+        auto capture_positions = std::vector<capture_pos>{};
+
         auto skip_hidden_name = [&](bool record_pos_range) -> bool {
             auto skip_to = [&](token const* identifier_end)
             {
@@ -870,6 +881,7 @@ private:
             {
                 //  Record the skipped subranges without captures
                 auto function_expression_end = decl->declaration;
+                auto function_expression_start = i;
                 pos_ranges.emplace_back(false, i - 1);
                 ++i;
                 while (
@@ -891,6 +903,7 @@ private:
                     {
                         pos_ranges.back().last = i - 1;
                         pos_ranges.emplace_back(false, i + 1);
+                        capture_positions.push_back({i, function_expression_start});
                     }
                     ++i;
                 }
@@ -1097,6 +1110,19 @@ private:
                     );
             }
             //found = true;
+
+            //  Continue from a capture's function expression, so the
+            //  branches its body contains aren't taken for ours
+            if (auto capture = std::find_if(
+                    capture_positions.begin(),
+                    capture_positions.end(),
+                    [&](capture_pos const& c) { return c.use == i; }
+                    );
+                capture != capture_positions.end()
+                )
+            {
+                i = capture->function_expression;
+            }
 
             compound_sym const* comp = nullptr;
 
