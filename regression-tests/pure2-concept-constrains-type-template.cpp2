@@ -1,0 +1,101 @@
+//  Concepts that a type template's declaration uses (in its requires clause or
+//  template parameter list) are emitted before the type's forward declaration,
+//  wherever they are written; other concepts can still call functions
+
+is_text: <T> concept = std::is_same_v<T, std::string>;
+
+holder: <T: type> type
+    requires is_text<T>
+= {
+    value: T = "held";
+    size: (this) -> std::size_t = value.size();
+}
+
+//  A concept that names a type declared before it in the file
+is_holder: <T> concept = std::is_same_v<T, holder<std::string>>;
+
+//  A concept that calls a function: no type uses it, so it still comes after
+//  the function declarations
+fits_in_word: <T> () -> bool == sizeof(T) <= 8u;
+is_small: <T> concept = fits_in_word<T>();
+
+//  A type whose concept is written after it, and that concept uses another
+late_holder: <T: type> type
+    requires is_late<T>
+= {
+    public value: T = ();
+}
+is_late: <T> concept = is_integral_or_float<T>;
+is_integral_or_float: <T> concept = std::is_integral_v<T> || std::is_floating_point_v<T>;
+
+//  A constraint in the template parameter list
+counted: <T: is_integral_or_float> type =
+{
+    public value: T = 3;
+}
+
+//  A member named like a concept: 'T::value' doesn't name the concept 'value',
+//  which uses a function and so must stay after the function declarations
+N: namespace =
+{
+    fits: <T> () -> bool == sizeof(T) <= 8u;
+    value: <T> concept = fits<T>();
+}
+M: namespace =
+{
+    tag: type = { public value: int == 1; }
+    tagged: <T: type> type requires (T::value == 1) = { }
+}
+
+//  A hoisted concept that names Cpp2 types declared before it
+shape: type = { }
+circle: type = { this: shape = (); }
+drawable: <T> concept = std::derived_from<T, shape>;
+canvas: <T: drawable> type = { }
+
+//  Two concepts with the same name in different namespaces
+A: namespace = {
+    c: <T> concept = std::integral<T>;
+    holder: <T: c> type = { }
+}
+B: namespace = {
+    c: <T> concept = std::floating_point<T>;
+    f: (x: _ is c) -> bool = { _ = x; return true; }
+}
+
+//  A member of a template-id isn't a concept candidate: 'value' here doesn't
+//  name the concept N::value
+P: namespace = {
+    integral_holder: <T: type> type requires (std::is_integral<T>::value) = { }
+}
+
+//  A concept that names a constrained type, constraining another type
+small: <T> concept = sizeof(T) <= 8u;
+box: <T: small> type = { }
+is_box: <T> concept = std::is_same_v<T, box<int>>;
+wrapper: <T: is_box> type = { }
+
+main: () =
+{
+    w: wrapper<box<int>> = ();
+    _ = w;
+    cv: canvas<circle> = ();
+    _ = cv;
+    ah: A::holder<int> = ();
+    _ = ah;
+    std::cout << B::f(1.0) << "\n";
+    ih: P::integral_holder<long> = ();
+    _ = ih;
+
+    h: holder<std::string> = ();
+    std::cout << h.size() << "\n";
+    std::cout << is_holder<holder<std::string>> << "\n";
+    std::cout << is_small<char> << "\n";
+    l: late_holder<int> = ();
+    std::cout << l.value << "\n";
+    c: counted<int> = ();
+    std::cout << c.value << "\n";
+    t: M::tagged<M::tag> = ();
+    _ = t;
+    std::cout << N::value<int> << "\n";
+}

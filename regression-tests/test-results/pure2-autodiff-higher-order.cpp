@@ -1030,7 +1030,7 @@ auto i{1};
 
 #line 202 "pure2-autodiff-higher-order.cpp2"
     for( ; cpp2::impl::cmp_less_eq(i,ad_order); i += 1 ) {
-      std::cout << "  d" + cpp2::to_string(i) + " = " + cpp2::to_string(CPP2_ASSERT_IN_BOUNDS(ret.r_d, i)) + "" << std::endl;
+      std::cout << "  d" + cpp2::to_string(i) + " = " + cpp2::to_string(CPP2_ASSERT_IN_BOUNDS((ret.r_d), i)) + "" << std::endl;
     }
 }
 #line 205 "pure2-autodiff-higher-order.cpp2"

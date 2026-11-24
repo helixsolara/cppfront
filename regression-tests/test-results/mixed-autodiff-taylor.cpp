@@ -190,7 +190,7 @@ auto i{1};
 
 #line 68 "mixed-autodiff-taylor.cpp2"
     for( ; cpp2::impl::cmp_less_eq(i,order); i += 1 ) {
-       std::cout << "" + cpp2::to_string(func) + " diff order " + cpp2::to_string(i) + " = " + cpp2::to_string(CPP2_ASSERT_IN_BOUNDS(ret.y, i)) + "" << std::endl;
+       std::cout << "" + cpp2::to_string(func) + " diff order " + cpp2::to_string(i) + " = " + cpp2::to_string(CPP2_ASSERT_IN_BOUNDS((ret.y), i)) + "" << std::endl;
     }
 }
 #line 71 "mixed-autodiff-taylor.cpp2"

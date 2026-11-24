@@ -31,7 +31,7 @@ class myclass {
     public: auto operator=(cpp2::impl::in<int> x) -> myclass& ;
 
 #line 13 "pure2-types-basics.cpp2"
-    public: myclass(cpp2::impl::in<std::string> s);
+    public: explicit myclass(cpp2::impl::in<std::string> s);
 #line 13 "pure2-types-basics.cpp2"
     public: auto operator=(cpp2::impl::in<std::string> s) -> myclass& ;
 

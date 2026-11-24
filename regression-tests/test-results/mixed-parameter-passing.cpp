@@ -94,9 +94,9 @@ auto parameter_styles(
     {if (cpp2::impl::cmp_less(b,a)) {return b; }else {return a; }}
 
 #line 45 "mixed-parameter-passing.cpp2"
-    template <typename T> [[nodiscard]] auto container<T>::operator[](cpp2::impl::in<cpp2::i32> idx) const& -> T const& { return CPP2_ASSERT_IN_BOUNDS(buf, idx); }
+    template <typename T> [[nodiscard]] auto container<T>::operator[](cpp2::impl::in<cpp2::i32> idx) const& -> T const& { return CPP2_ASSERT_IN_BOUNDS((buf), idx); }
 #line 46 "mixed-parameter-passing.cpp2"
-    template <typename T> [[nodiscard]] auto container<T>::operator[](cpp2::impl::in<cpp2::i32> idx) & -> T& { return CPP2_ASSERT_IN_BOUNDS(buf, idx);  }
+    template <typename T> [[nodiscard]] auto container<T>::operator[](cpp2::impl::in<cpp2::i32> idx) & -> T& { return CPP2_ASSERT_IN_BOUNDS((buf), idx);  }
 
 #line 49 "mixed-parameter-passing.cpp2"
 auto main() -> int{
@@ -105,6 +105,6 @@ auto main() -> int{
     std::cout << min(cpp2::move(x), cpp2::move(y)) << '\n';
 
     container<int> v {}; 
-    std::cout << CPP2_ASSERT_IN_BOUNDS_LITERAL(cpp2::move(v), 0) << '\n';
+    std::cout << CPP2_ASSERT_IN_BOUNDS_LITERAL((cpp2::move(v)), 0) << '\n';
 }
 

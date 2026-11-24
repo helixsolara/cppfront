@@ -1,0 +1,13 @@
+//  Moving a cpp2::finally hands its action to the new object; the moved-from
+//  one must not run it again when it is destroyed
+
+main: () =
+{
+    {
+        first := cpp2::finally(:() = std::cout << "action ran\n";);
+        second := first;    // the last use of first, so this moves it
+        _ = second;
+        std::cout << "leaving the scope\n";
+    }
+    std::cout << "left the scope\n";
+}

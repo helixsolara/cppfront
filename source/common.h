@@ -1,9 +1,8 @@
 
 //  Copyright 2022-2026 Herb Sutter
 //  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
-//  Modified in the helixsolara/cppfront fork to allow authoring C++20 module units,
-//  to pass bytes above 127 safely to the <cctype> classifiers, and to drop
-//  strip_path, which error messages no longer use.
+//  Modified in the helixsolara/cppfront fork (github.com/helixsolara/cppfront,
+//  branch ena/modules); its commit history says what changed.
 //  
 //  Part of the Cppfront Project, under the Apache License v2.0 with LLVM Exceptions.
 //  See https://github.com/hsutter/cppfront/blob/main/LICENSE for license information.
@@ -63,7 +62,7 @@ struct source_line
 {
     std::string text;
 
-    enum class category : u8 { empty, preprocessor, comment, module_directive, module_declaration, import, cpp1, cpp2, rawstring, preprocessor_was_emitted };
+    enum class category : u8 { empty, preprocessor, comment, module_directive, module_declaration, module_private_fragment, import, cpp1, cpp2, rawstring, preprocessor_was_emitted };
     category cat;
 
     bool all_tokens_are_densely_spaced = true; // to be overridden in lexing if they're not
@@ -80,7 +79,8 @@ struct source_line
         -> int
     {
         return
-            unchecked_narrow<int>(std::find_if_not( text.begin(), text.end(), &isspace )
+            unchecked_narrow<int>(std::find_if_not( text.begin(), text.end(),
+                                                    [](char c) { return isspace(static_cast<unsigned char>(c)); } )
                                - text.begin());
     }
 
@@ -135,7 +135,7 @@ struct comment
     source_position end;
     std::string     text;
 
-    mutable bool    dbg_was_printed = false;
+    mutable bool    was_printed = false;
 };
 
 struct string_parts {

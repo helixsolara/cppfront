@@ -4,7 +4,7 @@
 
 All Cpp2 declarations are written as **"_name_ `:` _kind_ `=` _statement_"**.
 
-- The _name_ must be a valid identifier (start with a letter, and consist of letters, digits, or `_`). The name can be variadic (be a name for a list of zero or more things) by writing a `...` suffix at the end of the name.
+- The _name_ must be a valid identifier (start with a letter, and consist of letters, digits, or `_`). The name can be variadic (be a name for a list of zero or more things) by writing a `...` suffix at the end of the name. A [template specialization](#template-specializations) instead names the template it specializes, with template arguments.
 
 - The `:` is pronounced **"is a."**
 
@@ -103,6 +103,36 @@ tuple: <Ts...: type> type
     // ...
 }
 ```
+
+
+### <a id="template-specializations"></a> Template specializations
+
+A type template can be specialized by declaring a type whose _name_ is the specialized template's name with template arguments, optionally qualified by the namespace the template is in. Its template parameter list says what stays generic: `<>` for an explicit (full) specialization, or the parameters of a partial specialization. A specialization must be declared at namespace scope, in a namespace that encloses the template's.
+
+For example:
+
+``` cpp title="Specializing type templates" hl_lines="6 11 16"
+traits: <T> type = {
+    name: () -> std::string_view = "generic";
+}
+
+//  An explicit specialization
+traits<widget>: <> type = {
+    name: () -> std::string_view = "widget";
+}
+
+//  A partial specialization: T stays generic
+traits<std::vector<T>>: <T> type = {
+    name: () -> std::string_view = "vector";
+}
+
+//  A specialization of a standard library template
+std::hash<widget>: @struct <> type = {
+    operator(): (this, w: widget) -> std::size_t = std::hash<int>()(w.id);
+}
+```
+
+> Note: In this fork, a specialization can be written before or after the template it specializes. Only types can be specialized, not functions or variables, and the `@enum` and `@flag_enum` metafunctions don't support specializations yet.
 
 
 ### <a id="requires"></a> `#!cpp requires` constraints

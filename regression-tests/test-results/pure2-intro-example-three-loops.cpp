@@ -48,7 +48,7 @@ auto decorate_and_print(auto& x) -> void{
 
     auto i {cpp2_new<int>(0)}; 
     for( ; cpp2::impl::cmp_less(*cpp2::impl::assert_not_null(i),CPP2_UFCS(ssize)(view)); ++*cpp2::impl::assert_not_null(i) ) {
-        print(CPP2_ASSERT_IN_BOUNDS(view, *cpp2::impl::assert_not_null(i)));
+        print(CPP2_ASSERT_IN_BOUNDS((view), *cpp2::impl::assert_not_null(i)));
     }
 
     do {

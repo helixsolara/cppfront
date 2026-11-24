@@ -36,7 +36,7 @@ auto print_and_decorate(auto const& x) -> void;
 
     auto i {0}; 
     for( ; cpp2::impl::cmp_less(i,CPP2_UFCS(ssize)(s)); ++i ) {
-        print_and_decorate(CPP2_ASSERT_IN_BOUNDS(s, i));
+        print_and_decorate(CPP2_ASSERT_IN_BOUNDS((s), i));
     }
 }
 

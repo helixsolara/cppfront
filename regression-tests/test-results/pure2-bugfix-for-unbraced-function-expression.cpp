@@ -42,12 +42,12 @@ extern cpp2::i32 y;
 {
 auto const& x{t()};
 #line 6 "pure2-bugfix-for-unbraced-function-expression.cpp2"
-  {CPP2_ASSERT_IN_BOUNDS(x, []() -> auto { return 0;  }); }
+  {CPP2_ASSERT_IN_BOUNDS((x), []() -> auto { return 0;  }); }
 }
 {
 auto const& x{t()};
 #line 7 "pure2-bugfix-for-unbraced-function-expression.cpp2"
-  {CPP2_ASSERT_IN_BOUNDS(x, []() -> auto { return 0;  }); }
+  {CPP2_ASSERT_IN_BOUNDS((x), []() -> auto { return 0;  }); }
 }
 
 #line 9 "pure2-bugfix-for-unbraced-function-expression.cpp2"

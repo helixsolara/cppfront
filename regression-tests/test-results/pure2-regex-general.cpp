@@ -83,10 +83,10 @@ auto main() -> int;
   auto general_regex_test::run() const& -> void{
     std::cout << "Running tests_01_char_matcher:" << std::endl;
 
-    std::cout << "Not full match fails: " << CPP2_UFCS(match)(regex_01, "AAaa").matched << std::endl;
-    std::cout << "Full match is ok:     " << CPP2_UFCS(match)(regex_01, "AA").matched << std::endl;
-    std::cout << "Search finds at position 1: " << CPP2_UFCS(group_start)(CPP2_UFCS(search)(regex_01, "aAAaa"), 0) << std::endl;
-    std::cout << "Search finds at position 3: " << CPP2_UFCS(group_start)(CPP2_UFCS(search)(regex_01, "aaaAAaa"), 0) << std::endl;
+    std::cout << "Not full match fails: " << CPP2_UFCS_ARGS((), (match), "AAaa")(regex_01).matched << std::endl;
+    std::cout << "Full match is ok:     " << CPP2_UFCS_ARGS((), (match), "AA")(regex_01).matched << std::endl;
+    std::cout << "Search finds at position 1: " << CPP2_UFCS(group_start)(CPP2_UFCS_ARGS((), (search), "aAAaa")(regex_01), 0) << std::endl;
+    std::cout << "Search finds at position 3: " << CPP2_UFCS(group_start)(CPP2_UFCS_ARGS((), (search), "aaaAAaa")(regex_01), 0) << std::endl;
 
     auto count {0}; 
     auto func {[&, _1 = (&count)](auto const& r) -> bool{
@@ -121,7 +121,7 @@ auto main() -> int;
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -173,7 +173,7 @@ template <typename CharT> [[nodiscard]] auto general_regex_test::regex_01_matche
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}

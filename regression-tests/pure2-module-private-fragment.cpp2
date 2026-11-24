@@ -1,0 +1,39 @@
+export module greeter;
+
+//  'module :private;' starts the private module fragment. Cpp2 writes each
+//  function once, with its body, so cppfront keeps every declaration in the
+//  module's interface and puts after this line the function bodies importers
+//  don't need. Where the line is written doesn't matter
+module :private;
+
+export greeting: (name: std::string_view) -> std::string =
+{
+    //  A comment in a private body, printed with it
+    return "Hello, " + std::string(name) + suffix();
+}
+
+//  Not exported: only this module calls it
+suffix: () -> std::string = "!";
+
+//  No '->' and a { } body: returns void, so its body can be private too
+export announce: (what: std::string_view) =
+{
+    std::cout << "announcing " << what << "\n";
+}
+
+//  These bodies stay in the interface, where importers need them:
+//  a template, and functions cppfront emits as templates ('forward' and
+//  variadic parameters get 'auto' types)
+export twice: <T> (value: T) -> T = value + value;
+export length: (forward s: std::string) -> int = unchecked_narrow<int>(s.ssize());
+export sum: (args...: int) -> int = (0 + ... + args);
+
+export counter: type =
+{
+    count: int = 0;
+
+    //  A constructor's body can be private
+    operator=: (out this, start: int) = { count = start; }
+
+    increment: (inout this) -> int = { count++; return count; }
+}

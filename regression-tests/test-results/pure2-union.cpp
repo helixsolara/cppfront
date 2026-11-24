@@ -204,7 +204,7 @@ auto main() -> int{
 
     CPP2_UFCS(print_name)(x);
 
-    CPP2_UFCS(set_name)(x, "xyzzy", cpp2::impl::as_<cpp2::u8, 3>());
+    CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (set_name), "xyzzy", CPP2_FORWARD(cpp2_ufcs_a0))(x, cpp2::impl::as_<cpp2::u8, 3>());
 
     CPP2_UFCS(print_name)(cpp2::move(x));
 

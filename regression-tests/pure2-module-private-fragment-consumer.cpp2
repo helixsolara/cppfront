@@ -1,0 +1,17 @@
+//  Uses the module 'greeter' (pure2-module-private-fragment.cpp2), whose
+//  function bodies are in its private module fragment, except those of
+//  templates
+import greeter;
+
+main: () =
+{
+    std::cout << greeting("module") << "\n";
+    announce("a void function");
+    std::cout << twice(21) << "\n";
+    std::cout << length(std::string("forwarded")) << "\n";
+    std::cout << sum(1, 2, 3) << "\n";
+    c: counter = (10);
+    _ = c.increment();
+    std::cout << c.increment() << "\n";
+    _ = c;
+}

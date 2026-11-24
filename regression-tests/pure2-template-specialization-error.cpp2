@@ -1,0 +1,4 @@
+traits: <T> type = { }
+
+//  Error: a specialization needs a template parameter list ('<>' here)
+traits<int>: type = { }

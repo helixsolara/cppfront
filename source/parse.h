@@ -1,8 +1,8 @@
 
 //  Copyright 2022-2026 Herb Sutter
 //  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
-//  Modified in the helixsolara/cppfront fork to allow authoring C++20 module units,
-//  and to pass bytes above 127 safely to the <cctype> classifiers.
+//  Modified in the helixsolara/cppfront fork (github.com/helixsolara/cppfront,
+//  branch ena/modules); its commit history says what changed.
 //  
 //  Part of the Cppfront Project, under the Apache License v2.0 with LLVM Exceptions.
 //  See https://github.com/hsutter/cppfront/blob/main/LICENSE for license information.
@@ -3560,6 +3560,13 @@ struct declaration_node
 
     std::vector<std::unique_ptr<id_expression_node>> metafunctions;
     std::unique_ptr<parameter_declaration_list_node> template_parameters;
+
+    //  A template specialization names the template it specializes, with the
+    //  template arguments on the name (in 'identifier') and, for a template in
+    //  another namespace, a qualifier before it: 'std::hash<widget>: <> type'
+    //  has the qualifier "std" and the identifier "hash<widget>"
+    std::vector<token const*>                        specialization_qualifier;
+
     source_position                                  requires_pos = {};
     std::unique_ptr<logical_or_expression_node>      requires_clause_expression;
 
@@ -3928,6 +3935,25 @@ public:
         { return is_object() && !has_name("this"); }
     auto is_concept  () const -> bool
         { return type.index() == an_object && get<an_object>(type)->is_concept();   }
+
+    //  A template specialization: its name carries template arguments, or a
+    //  qualifier naming the specialized template's namespace
+    auto is_specialization() const -> bool
+        { return !specialization_qualifier.empty() || (identifier && !identifier->template_args.empty()); }
+
+    //  An explicit (full) specialization, declared with '<>'
+    auto is_explicit_specialization() const -> bool
+        { return is_specialization() && template_parameters && template_parameters->parameters.empty(); }
+
+    //  The specialization's qualifier as written in Cpp1, "std::" for 'std::hash<widget>'
+    auto specialization_qualifier_string() const -> std::string
+    {
+        auto ret = std::string{};
+        for (auto t : specialization_qualifier) {
+            ret += t->to_string() + "::";
+        }
+        return ret;
+    }
     auto is_type     () const -> bool
         { return type.index() == a_type;      }
     auto is_namespace() const -> bool
@@ -6373,6 +6399,8 @@ auto pretty_print_visualize(
     }
 
     if (n.identifier) {
+        //  A specialization's name keeps its qualifier: std::hash<widget>
+        ret += n.specialization_qualifier_string();
         ret += pretty_print_visualize(*n.identifier, indent);
     }
 
@@ -10526,8 +10554,24 @@ private:
                 return {};
             }
 
+            //  A template specialization's name may be qualified with the
+            //  namespace of the template it specializes: 'std::hash<widget>'
+            auto specialization_qualifier = std::vector<token const*>{};
+            while (
+                !is_parameter
+                && curr().type() == lexeme::Identifier
+                && peek(1)
+                && peek(1)->type() == lexeme::Scope
+                )
+            {
+                specialization_qualifier.push_back(&curr());
+                next();
+                next();
+            }
+
             auto id = unqualified_id();
             if (!id) {
+                pos = start_pos;    // backtrack
                 return {};
             }
 
@@ -10645,10 +10689,42 @@ private:
                 pos = start_pos;    // backtrack
                 return {};
             }
+            n->specialization_qualifier = std::move(specialization_qualifier);
         }
 
         assert(n);
         n->is_static = is_static;
+
+        //  A name with template arguments or a qualifier declares a template
+        //  specialization, which must be a namespace-scope type with a template
+        //  parameter list: '<>' for an explicit specialization, or the parameters
+        //  a partial specialization keeps generic
+        if (n->is_specialization())
+        {
+            if (
+                !n->is_type()
+                || !n->template_parameters
+                || !n->parent_is_namespace()
+                )
+            {
+                errors.emplace_back(
+                    n->identifier->position(),
+                    "a name with template arguments or a qualifier declares a template specialization, "
+                    "which must be a namespace-scope type with a template parameter list "
+                    "(for example 'std::hash<widget>: <> type = { ... }')"
+                );
+                return {};
+            }
+            if (n->identifier->template_args.empty())
+            {
+                errors.emplace_back(
+                    n->identifier->position(),
+                    "a template specialization's name must carry template arguments "
+                    "(for example 'std::hash<widget>', not 'std::hash')"
+                );
+                return {};
+            }
+        }
 
         //  Note: Do this after trying to parse this as a declaration, for parse backtracking
 

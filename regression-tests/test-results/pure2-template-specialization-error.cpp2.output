@@ -1,0 +1,3 @@
+pure2-template-specialization-error.cpp2...
+pure2-template-specialization-error.cpp2(4,1): error: a name with template arguments or a qualifier declares a template specialization, which must be a namespace-scope type with a template parameter list (for example 'std::hash<widget>: <> type = { ... }')
+

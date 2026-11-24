@@ -1,0 +1,22 @@
+//  A one-argument constructor is explicit unless its 'this' is 'implicit'
+//  (docs/cpp2/types.md, "implicit")
+
+widget: type =
+{
+    public value: int = 0;
+
+    operator=: (out this) = { }
+    operator=: (out this, v: int) = { value = v; }
+    operator=: (implicit out this, s: std::string_view) = { value = unchecked_narrow<int>(s.ssize()); }
+    operator=: (out this, a: int, b: int) = { value = a + b; }
+}
+
+main: () =
+{
+    std::cout << "converts from int: (std::is_convertible_v<int, widget>)$\n";
+    std::cout << "converts from std::string_view: (std::is_convertible_v<std::string_view, widget>)$\n";
+    std::cout << "constructible from int: (std::is_constructible_v<widget, int>)$\n";
+
+    w: widget = (7);
+    std::cout << "direct initialization: (w.value)$\n";
+}

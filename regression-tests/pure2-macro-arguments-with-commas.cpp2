@@ -1,0 +1,22 @@
+//  The safety checks cppfront wraps around divisions and subscripts are macros.
+//  An argument with a template argument list holds a comma outside parentheses,
+//  which must not split it into two macro arguments.
+
+main: () =
+{
+    v: std::vector<int> = (10, 20, 30);
+
+    //  The divisor has a template comma
+    std::cout << 100 / std::common_type_t<int, long>(4) << "\n";
+
+    //  So does the subscript
+    std::cout << v[std::common_type_t<int, short>(1)] << "\n";
+
+    //  And the subscripted expression
+    std::cout << std::array<int, 3>()[2] << "\n";
+
+    //  A numerator whose type has a template comma, divided in place
+    x: std::common_type_t<int, long> = 50;
+    x /= std::common_type_t<int, short>(5);
+    std::cout << x << "\n";
+}

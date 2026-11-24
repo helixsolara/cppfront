@@ -1249,8 +1249,8 @@ auto main() -> int;
 
   auto get_next {[_0 = (&resultExpr)](auto const& iter) mutable -> auto{
   auto start {std::distance(CPP2_UFCS(cbegin)((*cpp2::impl::assert_not_null(_0))), iter)}; 
-    auto firstDollar {CPP2_UFCS(find)((*cpp2::impl::assert_not_null(_0)), "$", start)}; 
-    auto firstAt {CPP2_UFCS(find)((*cpp2::impl::assert_not_null(_0)), "@", cpp2::move(start))}; 
+    auto firstDollar {CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (find), "$", CPP2_FORWARD(cpp2_ufcs_a0))((*cpp2::impl::assert_not_null(_0)), start)}; 
+    auto firstAt {CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (find), "@", CPP2_FORWARD(cpp2_ufcs_a0))((*cpp2::impl::assert_not_null(_0)), cpp2::move(start))}; 
 
   auto end {std::min(cpp2::move(firstDollar), cpp2::move(firstAt))}; 
   if (end != std::string::npos) {
@@ -1472,7 +1472,7 @@ template<typename M> auto test(M const& regex, cpp2::impl::in<std::string> id, c
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -1505,7 +1505,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -1538,7 +1538,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -1590,7 +1590,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_01_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -1623,7 +1623,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -1656,7 +1656,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -1708,7 +1708,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_02_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -1741,7 +1741,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -1774,7 +1774,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -1826,7 +1826,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_03_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -1859,7 +1859,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -1892,7 +1892,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -1944,7 +1944,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_04_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -1977,7 +1977,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -2010,7 +2010,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -2062,7 +2062,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_05_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -2095,7 +2095,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -2128,7 +2128,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -2180,7 +2180,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_06_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -2213,7 +2213,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -2246,7 +2246,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -2298,7 +2298,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_07_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -2331,7 +2331,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -2364,7 +2364,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -2416,7 +2416,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_08_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -2449,7 +2449,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -2482,7 +2482,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -2534,7 +2534,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_09_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -2567,7 +2567,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -2600,7 +2600,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -2652,7 +2652,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_10_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -2685,7 +2685,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -2718,7 +2718,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -2770,7 +2770,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_11_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -2803,7 +2803,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -2836,7 +2836,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -2888,7 +2888,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_12_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -2921,7 +2921,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -2954,7 +2954,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -3006,7 +3006,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_13_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -3039,7 +3039,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -3072,7 +3072,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -3124,7 +3124,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_14_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -3157,7 +3157,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -3190,7 +3190,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -3242,7 +3242,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_15_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -3275,7 +3275,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -3308,7 +3308,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -3360,7 +3360,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_16_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -3393,7 +3393,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -3426,7 +3426,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -3478,7 +3478,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_17_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -3511,7 +3511,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -3544,7 +3544,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -3596,7 +3596,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_18_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -3629,7 +3629,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -3662,7 +3662,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -3714,7 +3714,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_19_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -3747,7 +3747,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -3780,7 +3780,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -3832,7 +3832,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_20_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -3865,7 +3865,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -3898,7 +3898,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -3950,7 +3950,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_21_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -3983,7 +3983,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -4016,7 +4016,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -4068,7 +4068,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_22_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -4101,7 +4101,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -4134,7 +4134,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -4186,7 +4186,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_23_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -4219,7 +4219,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -4252,7 +4252,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -4304,7 +4304,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_24_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -4337,7 +4337,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -4370,7 +4370,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -4422,7 +4422,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_25_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -4455,7 +4455,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -4488,7 +4488,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -4540,7 +4540,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_26_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -4573,7 +4573,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -4606,7 +4606,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -4658,7 +4658,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_27_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -4691,7 +4691,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -4724,7 +4724,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -4776,7 +4776,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_28_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -4809,7 +4809,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -4842,7 +4842,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -4894,7 +4894,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_29_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -4927,7 +4927,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -4960,7 +4960,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -5012,7 +5012,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_30_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -5045,7 +5045,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -5078,7 +5078,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -5130,7 +5130,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_31_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -5163,7 +5163,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -5196,7 +5196,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -5248,7 +5248,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_32_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -5281,7 +5281,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -5314,7 +5314,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -5366,7 +5366,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_33_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -5399,7 +5399,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -5432,7 +5432,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -5484,7 +5484,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_34_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -5517,7 +5517,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -5550,7 +5550,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -5602,7 +5602,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_35_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -5635,7 +5635,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -5668,7 +5668,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -5720,7 +5720,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_36_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -5753,7 +5753,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -5786,7 +5786,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -5838,7 +5838,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_37_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -5871,7 +5871,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -5904,7 +5904,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,2); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 2;}
@@ -5956,7 +5956,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_38_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -5989,7 +5989,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -6022,7 +6022,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -6074,7 +6074,7 @@ template <typename CharT> [[nodiscard]] auto test_tests_02_ranges::regex_39_matc
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_1, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_1), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -6107,7 +6107,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_0, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_0), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}
@@ -6140,7 +6140,7 @@ int i{0};
 {
 int i{0};
   for( ; cpp2::impl::cmp_less(i,1); (i += 1) ) {
-  if (CPP2_ASSERT_IN_BOUNDS(str_tmp_2, i) != CPP2_ASSERT_IN_BOUNDS(r.pos, i)) {r.matched = false;}
+  if (CPP2_ASSERT_IN_BOUNDS((str_tmp_2), i) != CPP2_ASSERT_IN_BOUNDS((r.pos), i)) {r.matched = false;}
   }
 }
   if (r.matched) {r.pos += 1;}

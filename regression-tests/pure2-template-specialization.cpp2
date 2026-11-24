@@ -1,0 +1,56 @@
+//  A template specialization names the template it specializes with its
+//  template arguments, and its template parameter list says what stays
+//  generic: '<>' for an explicit specialization
+
+//  A specialization written before its primary template
+traits<char>: <> type =
+{
+    name: () -> std::string_view = "char";
+}
+
+//  A specialization whose template arguments hold a '>' inside parentheses
+traits<decltype(std::declval<*std::string>()*.size())>: <> type =
+{
+    name: () -> std::string_view = "size type";
+}
+
+widget: @value type =
+{
+    public id: int = 0;
+    operator=: (out this, i: int) = { id = i; }
+}
+
+traits: <T> type =
+{
+    name: () -> std::string_view = "generic";
+}
+
+//  An explicit specialization of a Cpp2 template
+traits<widget>: <> type =
+{
+    name: () -> std::string_view = "widget";
+}
+
+//  A partial specialization
+traits<std::vector<T>>: <T> type =
+{
+    name: () -> std::string_view = "vector";
+}
+
+//  A specialization of a standard library template, qualified by its namespace
+std::hash<widget>: @struct <> type =
+{
+    operator(): (this, w: widget) -> std::size_t = std::hash<int>()(w.id);
+}
+
+main: () =
+{
+    std::cout << traits<int>::name() << " " << traits<widget>::name() << " " << traits<std::vector<int>>::name() << "\n";
+    std::cout << traits<char>::name() << " " << traits<std::size_t>::name() << "\n";
+
+    set: std::unordered_set<widget> = ();
+    set.insert(widget(1));
+    set.insert(widget(1));
+    set.insert(widget(2));
+    std::cout << set.size() << "\n";
+}

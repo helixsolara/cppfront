@@ -1,8 +1,8 @@
 
 //  Copyright 2022-2026 Herb Sutter
 //  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
-//  Modified in the helixsolara/cppfront fork to pass bytes above 127 safely to the
-//  <cctype> classifiers.
+//  Modified in the helixsolara/cppfront fork (github.com/helixsolara/cppfront,
+//  branch ena/modules); its commit history says what changed.
 //  
 //  Part of the Cppfront Project, under the Apache License v2.0 with LLVM Exceptions.
 //  See https://github.com/hsutter/cppfront/blob/main/LICENSE for license information.
@@ -322,17 +322,19 @@
 //
 //-----------------------------------------------------------------------
 //
-#define CPP2_TYPEOF(x)              std::remove_cvref_t<decltype(x)>
+//  The macros that take an expression are variadic (__VA_ARGS__), so a comma
+//  outside parentheses, as in a template argument list, stays part of it
+#define CPP2_TYPEOF(...)            std::remove_cvref_t<decltype(__VA_ARGS__)>
 #if __cplusplus >= 202302L && \
     ( \
      (defined(__clang_major__) && __clang_major__ >= 15) \
      || (defined(__GNUC__) && __GNUC__ >= 12) \
      )
-#define CPP2_COPY(x)                auto(x)
+#define CPP2_COPY(...)              auto(__VA_ARGS__)
 #else
-#define CPP2_COPY(x)                CPP2_TYPEOF(x)(x)
+#define CPP2_COPY(...)              CPP2_TYPEOF(__VA_ARGS__)(__VA_ARGS__)
 #endif
-#define CPP2_FORWARD(x)             std::forward<decltype(x)>(x)
+#define CPP2_FORWARD(...)           std::forward<decltype(__VA_ARGS__)>(__VA_ARGS__)
 #define CPP2_PACK_EMPTY(x)          (sizeof...(x) == 0)
 #define CPP2_CONTINUE_BREAK(NAME)   goto CONTINUE_##NAME; CONTINUE_##NAME: continue; goto BREAK_##NAME; BREAK_##NAME: break;
                                     // these redundant goto's to avoid 'unused label' warnings
@@ -1210,8 +1212,11 @@ constexpr auto assert_not_zero(auto&& arg CPP2_SOURCE_LOCATION_PARAM_WITH_DEFAUL
     return CPP2_FORWARD(arg);
 }
 
-#define CPP2_ASSERT_NOT_ZERO(NumType, arg)          (cpp2::impl::assert_not_zero<NumType>((arg)))
-#define CPP2_ASSERT_NOT_ZERO_LITERAL(NumType, arg)  (cpp2::impl::assert_not_zero<NumType, (arg)>('_'))
+//  The denominator is variadic (__VA_ARGS__) so a comma outside parentheses,
+//  as in a template argument list, doesn't split it into more macro arguments.
+//  NumType is always emitted as CPP2_TYPEOF(...), whose parentheses protect it
+#define CPP2_ASSERT_NOT_ZERO(NumType, ...)          (cpp2::impl::assert_not_zero<NumType>((__VA_ARGS__)))
+#define CPP2_ASSERT_NOT_ZERO_LITERAL(NumType, ...)  (cpp2::impl::assert_not_zero<NumType, (__VA_ARGS__)>('_'))
 
 
 //-----------------------------------------------------------------------
@@ -1257,8 +1262,11 @@ constexpr auto assert_in_bounds(auto&& x, auto&& arg CPP2_SOURCE_LOCATION_PARAM_
     return CPP2_FORWARD(x) [ CPP2_FORWARD(arg) ];
 }
 
-#define CPP2_ASSERT_IN_BOUNDS(x,arg)         (cpp2::impl::assert_in_bounds((x),(arg)))
-#define CPP2_ASSERT_IN_BOUNDS_LITERAL(x,arg) (cpp2::impl::assert_in_bounds<(arg)>(x))
+//  The index is variadic (__VA_ARGS__) so a comma outside parentheses, as in a
+//  template argument list, doesn't split it. cppfront emits the subscripted
+//  expression x in parentheses, which protect it the same way
+#define CPP2_ASSERT_IN_BOUNDS(x, ...)         (cpp2::impl::assert_in_bounds((x),(__VA_ARGS__)))
+#define CPP2_ASSERT_IN_BOUNDS_LITERAL(x, ...) (cpp2::impl::assert_in_bounds<(__VA_ARGS__)>(x))
 
 #ifdef CPP2_NO_RTTI
 // Compile-Time type name deduction for -fno-rtti builds
@@ -2290,7 +2298,8 @@ public:
     constexpr explicit finally(const F& ff) noexcept : f{ff} { }
     constexpr explicit finally(F&& ff) noexcept : f{std::move(ff)} { }
 
-    constexpr ~finally() noexcept { f(); }
+    //  A moved-from finally has handed its action on, so it doesn't run it
+    constexpr ~finally() noexcept { if (invoke) { f(); } }
 
     constexpr finally(finally&& that) noexcept
         : f(std::move(that.f)), invoke(std::exchange(that.invoke, false))
@@ -3083,6 +3092,64 @@ using cpp2::cpp2_new;
 #define CPP2_UFCS_NONLOCAL(...)                           CPP2_UFCS_(,CPP2_UFCS_IDENTITY,CPP2_UFCS_IDENTITY,(),,__VA_ARGS__)
 #define CPP2_UFCS_TEMPLATE_NONLOCAL(...)                  CPP2_UFCS_(,CPP2_UFCS_IDENTITY,CPP2_UFCS_IDENTITY,(),template,__VA_ARGS__)
 #define CPP2_UFCS_QUALIFIED_TEMPLATE_NONLOCAL(QUALID,...) CPP2_UFCS_(,CPP2_UFCS_IDENTITY,CPP2_UFCS_IDENTITY,QUALID,template,__VA_ARGS__)
+
+
+//-----------------------------------------------------------------------
+//
+//  CPP2_UFCS_ARGS: UFCS for a call with a string literal argument
+//
+//  CPP2_UFCS passes the arguments through its lambda's parameters, and a
+//  function parameter is never a constant expression, so a literal that has
+//  to stay one (to initialize a std::format_string, say) can't get through.
+//  For a call with a string literal argument, cppfront uses these instead.
+//  PARAMS declares the lambda's parameters after the object, one named
+//  parameter per argument that isn't a string literal, and a trailing pack for
+//  a pack expansion: '(, auto&& cpp2_ufcs_a0, auto&&... cpp2_ufcs_rest)'.
+//  After FUNC comes the call's argument list, with each string literal written
+//  out and the other arguments forwarded from those parameters. The lambda is
+//  then called with the object and those other arguments, which are evaluated
+//  in the caller as usual (their temporaries live to the end of the caller's
+//  full-expression). The parameters are generic, so 'if constexpr' still
+//  discards the branch that doesn't apply.
+//
+//  FUNC is in parentheses, so commas in its template argument list stay in
+//  it. Only local forms exist: FUNC may name a local function object.
+//
+//  Unlike CPP2_UFCS, the lambda doesn't propagate the call's noexcept.
+//
+//-----------------------------------------------------------------------
+//
+#define CPP2_UFCS_ARGS_(MVFWD,QUALID,TEMPKW,PARAMS,FUNC,...) \
+[&] CPP2_LAMBDA_NO_DISCARD (auto&& cpp2_ufcs_obj CPP2_UFCS_REMPARENS PARAMS) CPP2_FORCE_INLINE_LAMBDA_CLANG CPP2_FORCE_INLINE_LAMBDA -> decltype(auto) \
+  { \
+    if constexpr      (requires{ CPP2_FORWARD(cpp2_ufcs_obj).CPP2_UFCS_REMPARENS QUALID TEMPKW CPP2_UFCS_REMPARENS FUNC(__VA_ARGS__); }) { \
+        return                   CPP2_FORWARD(cpp2_ufcs_obj).CPP2_UFCS_REMPARENS QUALID TEMPKW CPP2_UFCS_REMPARENS FUNC(__VA_ARGS__); \
+    } \
+    else if constexpr (requires{ MVFWD(CPP2_UFCS_REMPARENS QUALID CPP2_UFCS_REMPARENS FUNC)(CPP2_FORWARD(cpp2_ufcs_obj), __VA_ARGS__); }) { \
+        return                   MVFWD(CPP2_UFCS_REMPARENS QUALID CPP2_UFCS_REMPARENS FUNC)(CPP2_FORWARD(cpp2_ufcs_obj), __VA_ARGS__); \
+    } \
+    else if constexpr (requires{ cpp2_ufcs_obj.CPP2_UFCS_REMPARENS QUALID TEMPKW CPP2_UFCS_REMPARENS FUNC(__VA_ARGS__); }) { \
+        static_assert( cpp2::impl::dependent_false<decltype(cpp2_ufcs_obj)>::value, "error: implicit discard of an object's modified value is not allowed - this function call modifies 'obj', but 'obj' is never used again in the function so the new value is never used - if that's what you intended, add another line '_ = obj;' afterward to explicitly discard the new value of the object" ); \
+        CPP2_FORWARD(cpp2_ufcs_obj).CPP2_UFCS_REMPARENS QUALID TEMPKW CPP2_UFCS_REMPARENS FUNC(__VA_ARGS__); \
+        MVFWD(CPP2_UFCS_REMPARENS QUALID CPP2_UFCS_REMPARENS FUNC)(CPP2_FORWARD(cpp2_ufcs_obj), __VA_ARGS__); \
+    } \
+    else if constexpr (requires{ MVFWD(CPP2_UFCS_REMPARENS QUALID CPP2_UFCS_REMPARENS FUNC)(cpp2_ufcs_obj, __VA_ARGS__); }) { \
+        static_assert( cpp2::impl::dependent_false<decltype(cpp2_ufcs_obj)>::value, "error: implicit discard of an object's modified value is not allowed - this function call modifies 'obj', but 'obj' is never used again in the function so the new value is never used - if that's what you intended, add another line '_ = obj;' afterward to explicitly discard the new value of the object" ); \
+        CPP2_FORWARD(cpp2_ufcs_obj).CPP2_UFCS_REMPARENS QUALID TEMPKW CPP2_UFCS_REMPARENS FUNC(__VA_ARGS__); \
+        MVFWD(CPP2_UFCS_REMPARENS QUALID CPP2_UFCS_REMPARENS FUNC)(CPP2_FORWARD(cpp2_ufcs_obj), __VA_ARGS__); \
+    } \
+    else { \
+        static_assert( cpp2::impl::dependent_false<decltype(cpp2_ufcs_obj)>::value, "this function call syntax tries 'obj.func(...)', then 'func(obj,...);', but both failed - if this function call is passing a local variable that will be modified by the function, but that variable is never used again in the function so the new value is never used, that's likely the problem - if that's what you intended, add another line '_ = obj;' afterward to explicitly discard the new value of the object" ); \
+        CPP2_FORWARD(cpp2_ufcs_obj).CPP2_UFCS_REMPARENS QUALID TEMPKW CPP2_UFCS_REMPARENS FUNC(__VA_ARGS__); \
+        MVFWD(CPP2_UFCS_REMPARENS QUALID CPP2_UFCS_REMPARENS FUNC)(CPP2_FORWARD(cpp2_ufcs_obj), __VA_ARGS__); \
+    } \
+  }
+
+#define CPP2_UFCS_ARGS(PARAMS,FUNC,...)                           CPP2_UFCS_ARGS_(CPP2_UFCS_IDENTITY,(),,PARAMS,FUNC,__VA_ARGS__)
+#define CPP2_UFCS_MOVE_ARGS(PARAMS,FUNC,...)                      CPP2_UFCS_ARGS_(std::move,(),,PARAMS,FUNC,__VA_ARGS__)
+#define CPP2_UFCS_FORWARD_ARGS(PARAMS,FUNC,...)                   CPP2_UFCS_ARGS_(CPP2_FORWARD,(),,PARAMS,FUNC,__VA_ARGS__)
+#define CPP2_UFCS_TEMPLATE_ARGS(PARAMS,FUNC,...)                  CPP2_UFCS_ARGS_(CPP2_UFCS_IDENTITY,(),template,PARAMS,FUNC,__VA_ARGS__)
+#define CPP2_UFCS_QUALIFIED_TEMPLATE_ARGS(PARAMS,QUALID,FUNC,...) CPP2_UFCS_ARGS_(CPP2_UFCS_IDENTITY,QUALID,template,PARAMS,FUNC,__VA_ARGS__)
 
 
 //  GCC 10 doesn't support 'requires' in forward declarations in some cases

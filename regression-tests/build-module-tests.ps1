@@ -5,8 +5,10 @@
 # alone. This script compiles their generated code from test-results in
 # dependency order, links the 'shapes' module with its consumer, runs it and
 # compares the output with test-results/pure2-module-consumer.cpp.execution.
-# It also compiles mixed-module-global-fragment.cpp on its own. Object and .ifc
-# files go to -BuildDir, outside the repo.
+# It also compiles mixed-module-global-fragment.cpp on its own, and builds the
+# 'greeter' module (pure2-module-private-fragment, whose function bodies are in
+# its private module fragment) with its consumer and checks that program's
+# output. Object and .ifc files go to -BuildDir, outside the repo.
 #
 # Run it from a Developer PowerShell (cl.exe and link.exe on PATH), after
 # run-tests.sh has regenerated test-results:
@@ -73,6 +75,20 @@ try {
     Test-ShapesOutput
 
     Invoke-Compile -Name 'mixed-module-global-fragment' -Kind '/interface'
+
+    #  Module 'greeter', whose function bodies are in its private module
+    #  fragment (module :private;), and a program importing it
+    Invoke-Compile -Name 'pure2-module-private-fragment' -Kind '/interface'
+    Invoke-Compile -Name 'pure2-module-private-fragment-consumer'
+    & link.exe /nologo /out:private-fragment.exe pure2-module-private-fragment.obj pure2-module-private-fragment-consumer.obj
+    if ($LASTEXITCODE) {
+        throw 'Linking private-fragment.exe failed'
+    }
+    $expected = [IO.File]::ReadAllText((Join-Path $resultsDir 'pure2-module-private-fragment-consumer.cpp.execution')).Replace("`r`n", "`n")
+    $actual = ((& .\private-fragment.exe) -join "`n") + "`n"
+    if ($actual -ne $expected) {
+        throw "private-fragment.exe output differs from pure2-module-private-fragment-consumer.cpp.execution:`n$actual"
+    }
 
     Write-Output 'Module tests built and ran as expected'
 }

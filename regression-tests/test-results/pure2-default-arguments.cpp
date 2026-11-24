@@ -80,7 +80,7 @@ template
     ) -> void
 {
     for ( auto const& kv : map2 ) {
-        CPP2_ASSERT_IN_BOUNDS(map1, kv.first) = func(CPP2_ASSERT_IN_BOUNDS(map1, kv.first), kv.second);
+        CPP2_ASSERT_IN_BOUNDS((map1), kv.first) = func(CPP2_ASSERT_IN_BOUNDS((map1), kv.first), kv.second);
     }
 }
 
@@ -112,13 +112,13 @@ auto main(int const argc_, char** argv_) -> int{
     }();
 
     std::map<int,int> m1 {}; 
-    CPP2_ASSERT_IN_BOUNDS_LITERAL(m1, 1) = 11;
+    CPP2_ASSERT_IN_BOUNDS_LITERAL((m1), 1) = 11;
 
     std::map<int,int> m2 {}; 
-    CPP2_ASSERT_IN_BOUNDS_LITERAL(m2, 1) = 22;
+    CPP2_ASSERT_IN_BOUNDS_LITERAL((m2), 1) = 22;
 
     combine_maps(m1, m2, [](auto const& x, auto const& y) -> decltype(auto) { return x + y + 33;  });
 
-    std::cout << "" + cpp2::to_string(CPP2_UFCS(size)(m1)) + ", " + cpp2::to_string(CPP2_UFCS(size)(cpp2::move(m2))) + ", " + cpp2::to_string(CPP2_ASSERT_IN_BOUNDS_LITERAL(m1, 1)) + "\n";
+    std::cout << "" + cpp2::to_string(CPP2_UFCS(size)(m1)) + ", " + cpp2::to_string(CPP2_UFCS(size)(cpp2::move(m2))) + ", " + cpp2::to_string(CPP2_ASSERT_IN_BOUNDS_LITERAL((m1), 1)) + "\n";
 }
 

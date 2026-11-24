@@ -45,7 +45,7 @@ class X {
     private: Y* py; 
 
     //  Note: A constructor with an 'out' parameter
-    public: X(cpp2::impl::out<Y> y);
+    public: explicit X(cpp2::impl::out<Y> y);
 #line 10 "pure2-types-order-independence-and-nesting.cpp2"
     public: auto operator=(cpp2::impl::out<Y> y) -> X& ;
 
@@ -64,7 +64,7 @@ class X {
 class Y {
     private: X* px; 
 
-    public: Y(cpp2::impl::in<X*> x);
+    public: explicit Y(cpp2::impl::in<X*> x);
 #line 49 "pure2-types-order-independence-and-nesting.cpp2"
     public: auto operator=(cpp2::impl::in<X*> x) -> Y& ;
 

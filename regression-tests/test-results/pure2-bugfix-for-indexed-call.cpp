@@ -25,7 +25,7 @@ auto main() -> int{
   std::array array_of_functions {f, f}; 
   auto index {0}; 
   cpp2::i32 arguments {0}; 
-  CPP2_ASSERT_IN_BOUNDS(array_of_functions, index)(arguments);
+  CPP2_ASSERT_IN_BOUNDS((array_of_functions), index)(arguments);
   static_cast<void>(cpp2::move(array_of_functions));
   static_cast<void>(cpp2::move(index));
   static_cast<void>(cpp2::move(arguments));

@@ -1,0 +1,8 @@
+export module checked;
+
+module :private;
+
+//  Error: Cpp1 code after 'module :private;' in a file with Cpp2
+int cpp1_detail() { return 1; }
+
+export answer: () -> int = 42;

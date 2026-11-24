@@ -1,0 +1,49 @@
+//  A string literal passed through UFCS (x.f("...")) stays a constant
+//  expression, so it can initialize a parameter that must be one, such as a
+//  std::format_string
+
+printer: type =
+{
+    print: <Args...: type> (this, pattern: std::format_string<Args...>, args...: Args) =
+        std::cout << std::vformat(pattern.get(), std::make_format_args(args...)) << "\n";
+
+    print_as: <T> (this, pattern: std::format_string<T>, value: T) =
+        std::cout << std::vformat(pattern.get(), std::make_format_args(value)) << "\n";
+
+    //  A pack forwarded with a literal pattern
+    print_pair: <Args...: type> (this, args...: Args) = { _ = this.print("{} and {}", args...); }
+
+    //  A pack followed by another argument
+    cat: (this, a: std::string, b: std::string, c: std::string) -> std::string = a + b + c;
+    cat: (this, a: std::string, b: std::string, c: std::string, d: std::string) -> std::string = a + b + c + d;
+    cat_all: <Args...: type> (this, last: std::string, args...: Args) -> std::string = this.cat("lit", args..., last);
+}
+
+//  A non-member, reached through UFCS when printer has no such member
+shout: <Args...: type> (p: printer, pattern: std::format_string<Args...>, args...: Args) =
+{
+    _ = p;
+    std::cout << std::vformat(pattern.get(), std::make_format_args(args...)) << "!\n";
+}
+
+//  (A qualified call, p.ns::f<T>("..."), takes the same path, but GCC rejects
+//  UFCS to a qualified non-member with or without this change, so it isn't
+//  tested here)
+
+main: () =
+{
+    p: printer = ();
+    count := 3;
+    p.print("{} + {} = {}", 1, 2, 3);           //  a member, with a literal pattern
+    p.shout("{} through UFCS", "non-member");   //  a non-member
+    p.print_as<int>("as an int: {}", 42);       //  with template arguments
+    p.print_pair(1, "two");                     //  a pack with a literal pattern
+    std::cout << p.cat_all("LAST", std::string("mid1"), std::string("mid2")) << "\n";
+    p.print("count is {}", count);              //  a literal with a last-use argument
+    _ = p;
+
+    //  A UFCS call with a literal inside another's arguments
+    s: std::string = "hello world";
+    t: std::string = "lo";
+    std::cout << s.find("o", t.find("o")) << "\n";
+}

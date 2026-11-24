@@ -1,9 +1,8 @@
 
 //  Copyright 2022-2026 Herb Sutter
 //  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
-//  Modified in the helixsolara/cppfront fork to allow authoring C++20 module units,
-//  to pass bytes above 127 safely to the <cctype> classifiers, and to skip a UTF-8
-//  byte order mark.
+//  Modified in the helixsolara/cppfront fork (github.com/helixsolara/cppfront,
+//  branch ena/modules); its commit history says what changed.
 //  
 //  Part of the Cppfront Project, under the Apache License v2.0 with LLVM Exceptions.
 //  See https://github.com/hsutter/cppfront/blob/main/LICENSE for license information.
@@ -42,7 +41,7 @@ auto move_next(
     while (
         i < ssize(line)
         && line[i]
-        && p(line[i])
+        && p(as_ctype(line[i]))     // p is usually a <cctype> classifier
         )
     {
         ++i;
@@ -277,6 +276,23 @@ auto starts_with_operator(std::string_view s)
 }
 
 //---------------------------------------------------------------------------
+//  starts_with_private_module_fragment: whether the line is 'module :private;',
+//  which looks like a Cpp2 declaration ('module: private') but isn't one
+//
+auto starts_with_private_module_fragment(std::string const& line)
+    -> bool
+{
+    //  starts_with_tokens doesn't take a token followed by an identifier
+    //  character, so ':private' is matched as one token, or ':' and 'private'
+    //  when there's space between them
+    return
+        starts_with_tokens(line, {"module", ":private", ";"})
+        || starts_with_tokens(line, {"module", ":", "private", ";"})
+        ;
+}
+
+
+//---------------------------------------------------------------------------
 //  starts_with_identifier_colon: returns whether the line starts with an
 //  identifier followed by one colon (not ::) (possibly preceded by an access specifier)
 //
@@ -328,10 +344,69 @@ auto starts_with_identifier_colon(std::string const& line)
     if (j == 0) {
         return false;
     }
+    auto is_operator_name = starts_with_operator(s) != 0;
     i += j;
 
     if (!move_next(line, i, isalnum)) {
         return false;
+    }
+
+    //  A template specialization's name can be qualified and carry template
+    //  arguments, as in 'std::hash<widget>: <> type = ...', so after an
+    //  identifier accept '::identifier' parts and balanced '<...>' lists
+    //  (on one line)
+    auto is_specialization_name = false;
+    while (!is_operator_name)
+    {
+        auto k = i;
+        while (k < ssize(line) && isspace(as_ctype(line[k]))) {
+            ++k;
+        }
+        if (
+            k+1 < ssize(line)
+            && line[k] == ':'
+            && line[k+1] == ':'
+            )
+        {
+            k += 2;
+            while (k < ssize(line) && isspace(as_ctype(line[k]))) {
+                ++k;
+            }
+            auto id_length = starts_with_identifier(std::string_view(line).substr(k));
+            if (id_length == 0) {
+                return false;
+            }
+            i = k + id_length;
+            is_specialization_name = true;
+        }
+        else if (
+            k < ssize(line)
+            && line[k] == '<'
+            && (k+1 == ssize(line) || line[k+1] != '<')
+            )
+        {
+            //  Skip to the matching '>', counting nested '<' '>', and ignoring
+            //  them inside parentheses (as in 'decltype(p->size())')
+            auto angles = 0;
+            auto parens = 0;
+            for (; k < ssize(line); ++k) {
+                if      (line[k] == '(') { ++parens; }
+                else if (line[k] == ')') { --parens; }
+                else if (parens == 0 && line[k] == '<') { ++angles; }
+                else if (parens == 0 && line[k] == '>') { --angles; }
+                if (angles == 0 && parens == 0) {
+                    break;
+                }
+            }
+            if (k == ssize(line)) {
+                return false;
+            }
+            i = k + 1;
+            is_specialization_name = true;
+        }
+        else {
+            break;
+        }
     }
 
     //  find first non-whitespace character
@@ -342,10 +417,38 @@ auto starts_with_identifier_colon(std::string const& line)
     //  it's Cpp2 iff what's here is : not followed by another :
     //  (e.g., not a Cpp1 "using ::something")
     assert (i < ssize(line));
-    return
-        line[i] == ':'
-        && (i == ssize(line)-1 || line[i+1] != ':')
-        ;
+    if (
+        line[i] != ':'
+        || (i < ssize(line)-1 && line[i+1] == ':')
+        )
+    {
+        return false;
+    }
+
+    //  A qualified or templated name is a specialization only if what follows
+    //  the ':' is what a specialization declares: a template parameter list,
+    //  a metafunction, or 'type'/'final type'. Otherwise the line is Cpp1, as
+    //  in a conditional operator 'cond ? std::x::y : 0' continued on its own line
+    if (is_specialization_name)
+    {
+        auto rest = std::string_view(line).substr(i+1);
+        while (!rest.empty() && isspace(as_ctype(rest.front()))) {
+            rest.remove_prefix(1);
+        }
+        auto starts_with_word = [&](std::string_view word) {
+            return
+                rest.starts_with(word)
+                && (rest.size() == word.size() || !is_identifier_continue(rest[word.size()]))
+                ;
+        };
+        return
+            rest.starts_with("<")
+            || rest.starts_with("@")
+            || starts_with_word("type")
+            || starts_with_word("final")
+            ;
+    }
+    return true;
 }
 
 
@@ -856,6 +959,7 @@ class source
     std::vector<source_line>  lines;
     std::ptrdiff_t            module_lines           = 0;
     bool                      module_directive_found = false;
+    lineno_t                  private_fragment_line  = 0;   // 'module :private;', or 0
     bool                      cpp1_found             = false;
     bool                      cpp2_found             = false;
 
@@ -894,6 +998,18 @@ public:
     //
     auto has_module_directive() const -> bool {
         return module_directive_found;
+    }
+
+
+    //-----------------------------------------------------------------------
+    //  get_private_fragment_line: Returns the line of 'module :private;',
+    //  which starts the private module fragment, or 0 if there is none.
+    //  In a file with Cpp2, the line's position doesn't matter: the marker
+    //  is emitted before the Cpp2 function bodies importers don't need
+    //  (see phase 2 in to_cpp1.h), and Cpp1 code may not follow it
+    //
+    auto get_private_fragment_line() const -> lineno_t {
+        return private_fragment_line;
     }
 
 
@@ -1013,6 +1129,7 @@ public:
                     && braces.current_depth() < 1
                     && starts_with_identifier_colon(lines.back().text)
                     && !starts_with_import(lines.back().text) // For a _module-partition_.
+                    && !starts_with_private_module_fragment(lines.back().text)  // Not 'module: private'
                     )
                 {
                     cpp2_found= true;
@@ -1054,6 +1171,21 @@ public:
                     if (starts_with_tokens(lines.back().text, {"module", ";"})) {
                         lines.back().cat = source_line::category::module_directive;
                         module_directive_found = true;
+                    }
+                    //  'module :private;' starts the private module fragment. It isn't
+                    //  a module declaration (those are emitted first, with the module
+                    //  lines): the code after it in the source goes after it
+                    else if (starts_with_private_module_fragment(lines.back().text))
+                    {
+                        lines.back().cat = source_line::category::module_private_fragment;
+                        if (private_fragment_line != 0) {
+                            errors.emplace_back(
+                                source_position(unchecked_narrow<lineno_t>(std::ssize(lines) - 1), 1),
+                                "a module unit can have only one 'module :private;'"
+                            );
+                            return false;
+                        }
+                        private_fragment_line = unchecked_narrow<lineno_t>(std::ssize(lines) - 1);
                     }
                     else if (
                         starts_with_tokens(lines.back().text, {"module"})

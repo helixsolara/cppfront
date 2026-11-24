@@ -32,12 +32,12 @@ auto main() -> int{
 
     std::cout << "\nAnd from indexes 1..=5 they are:\n";
     for ( auto const& e : cpp2::range(1,5,true) ) {
-        std::cout << "  " + cpp2::to_string(e) + "  " + cpp2::to_string(CPP2_ASSERT_IN_BOUNDS(v, e)) + "\n";
+        std::cout << "  " + cpp2::to_string(e) + "  " + cpp2::to_string(CPP2_ASSERT_IN_BOUNDS((v), e)) + "\n";
     }
 
     std::cout << "\nAnd test the range when mixing signed & unsigned types:\n";
     for ( auto const& e : cpp2::range(0,CPP2_UFCS(size)(v)) ) {
-        std::cout << "  " + cpp2::to_string(e) + "  " + cpp2::to_string(CPP2_ASSERT_IN_BOUNDS(v, e)) + "\n";
+        std::cout << "  " + cpp2::to_string(e) + "  " + cpp2::to_string(CPP2_ASSERT_IN_BOUNDS((v), e)) + "\n";
     }
 
     std::list all_about {

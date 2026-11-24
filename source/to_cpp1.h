@@ -1,9 +1,8 @@
 
 //  Copyright 2022-2026 Herb Sutter
 //  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
-//  Modified in the helixsolara/cppfront fork to allow authoring C++20 module units,
-//  to pass bytes above 127 safely to the <cctype> classifiers, and to name the
-//  source file in error messages by the path it was given.
+//  Modified in the helixsolara/cppfront fork (github.com/helixsolara/cppfront,
+//  branch ena/modules); its commit history says what changed.
 //  
 //  Part of the Cppfront Project, under the Apache License v2.0 with LLVM Exceptions.
 //  See https://github.com/hsutter/cppfront/blob/main/LICENSE for license information.
@@ -261,6 +260,27 @@ private:
         next_comment = 0;   // start over with the comments
     }
 
+    //  When set, a comment is printed only if this returns true for its line
+    //  (see 'module :private;' in the translation unit's emission)
+    std::function<bool(lineno_t)> comment_filter;
+
+public:
+    auto set_comment_filter(std::function<bool(lineno_t)> filter)
+        -> void
+    {
+        comment_filter = std::move(filter);
+    }
+
+    //  Goes over the comments again from the start, printing those not yet printed
+    auto restart_comments()
+        -> void
+    {
+        next_comment = 0;
+    }
+
+private:
+
+
     std::vector<std::string*>                emit_string_targets;       // option to emit to string instead of out file
     std::vector<std::vector<text_with_pos>*> emit_text_chunks_targets;  // similar for vector<text_pos>
 
@@ -432,7 +452,7 @@ private:
             print( c.text );
         }
 
-        c.dbg_was_printed = true;
+        c.was_printed = true;
     }
 
     auto flush_comments( source_position pos, bool print_remaining_comments = false )
@@ -459,14 +479,21 @@ private:
                 //  and emit function body comments in phase2_func_defs
                 assert(pparser);
                 if (
-                    (
-                        phase == phase1_type_defs_func_decls
-                        && !pparser->is_within_function_body( comments[next_comment].start.lineno )
+                    !comments[next_comment].was_printed
+                    && (
+                        !comment_filter
+                        || comment_filter(comments[next_comment].start.lineno)
                         )
-                    ||
-                    (
-                        phase == phase2_func_defs
-                        && pparser->is_within_function_body( comments[next_comment].start.lineno )
+                    && (
+                        (
+                            phase == phase1_type_defs_func_decls
+                            && !pparser->is_within_function_body( comments[next_comment].start.lineno )
+                            )
+                        ||
+                        (
+                            phase == phase2_func_defs
+                            && pparser->is_within_function_body( comments[next_comment].start.lineno )
+                            )
                         )
                     )
                 {
@@ -493,7 +520,7 @@ private:
     auto print_unprinted_comments()
     {
         for (auto const& c : *pcomments) {
-            if (!c.dbg_was_printed) {
+            if (!c.was_printed) {
                 print_comment(c);
             }
         }
@@ -1036,6 +1063,499 @@ class cppfront
 
     declaration_node const* having_signature_emitted = {};
 
+    //  Whether a call argument is a plain string literal, which UFCS keeps a
+    //  constant expression (see CPP2_UFCS_ARGS in cpp2util.h)
+    static auto is_string_literal_argument(expression_list_node::term const& x)
+        -> bool
+    {
+        auto lit = x.expr->get_literal();
+        return
+            x.pass == passing_style::in
+            && lit
+            && lit->get_token()->type() == lexeme::StringLiteral
+            ;
+    }
+
+    //  A module unit with 'module :private;' emits phase 2 (the definitions) in
+    //  two passes: the module's interface, then after the marker the private
+    //  module fragment, which gets the function bodies importers don't need
+    enum class phase2_part_t : u8 { whole, interface, private_fragment };
+    phase2_part_t phase2_part = phase2_part_t::whole;
+
+    //  Whether the parameter emitter (emit(parameter_declaration_node)) writes
+    //  this parameter's type as 'auto', making its function a template: a
+    //  wildcard ('_') type, a variadic parameter, or a 'forward' parameter.
+    //  Keep in step with that function
+    static auto parameter_is_generic(parameter_declaration_node const& p)
+        -> bool
+    {
+        auto& decl = *p.declaration;
+        if (
+            decl.has_name("this")
+            || decl.has_name("that")
+            )
+        {
+            return false;
+        }
+        return
+            decl.has_wildcard_type()
+            || decl.is_variadic
+            || p.pass == passing_style::forward
+            ;
+    }
+
+    //  Whether a function's definition must stay in the module's interface
+    //  rather than go into its private module fragment: importers need the
+    //  definitions of templates (including members of class templates and
+    //  functions with generic parameters), of constexpr functions, and of
+    //  functions whose return type is deduced
+    auto definition_must_stay_in_interface(declaration_node const& n)
+        -> bool
+    {
+        if (
+            n.template_parameters
+            || n.is_constexpr
+            )
+        {
+            return true;
+        }
+        if (auto func = std::get_if<declaration_node::a_function>(&n.type))
+        {
+            //  A deduced return type: '-> _', or no '->' with an expression
+            //  body (with a { } body and no '->' the function returns void)
+            auto& f = **func;
+            if (
+                (
+                    f.returns.index() == function_type_node::id
+                    && std::get<function_type_node::id>(f.returns).type->is_wildcard()
+                    )
+                || (
+                    f.returns.index() == function_type_node::empty
+                    && n.initializer
+                    && !n.initializer->is_compound()
+                    )
+                )
+            {
+                return true;
+            }
+
+            //  A function with a parameter emitted as 'auto' is a template
+            for (auto& param : f.parameters->parameters) {
+                if (parameter_is_generic(*param)) {
+                    return true;
+                }
+            }
+        }
+        for (
+            auto parent = n.parent_declaration;
+            parent && parent->is_type();
+            parent = parent->parent_declaration
+            )
+        {
+            if (
+                parent->template_parameters
+                && !parent->is_explicit_specialization()
+                )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //  Whether n is a function whose body goes into the private module fragment
+    auto goes_in_private_fragment(declaration_node const& n)
+        -> bool
+    {
+        return
+            n.is_function()
+            && n.initializer
+            && (n.parent_is_namespace() || n.parent_is_type())
+            && !definition_must_stay_in_interface(n)
+            ;
+    }
+
+    //  Adds the line ranges of the bodies under n that go into the private
+    //  module fragment, so their comments are printed there
+    //  next_start is the line where the next declaration starts: an expression
+    //  body's range ends just before it (an expression keeps no end position).
+    //  Phase 2 prints only comments inside function bodies, so a range that
+    //  reaches into the blank lines after a body changes nothing else
+    auto collect_private_fragment_lines(
+        declaration_node const&                     n,
+        lineno_t                                    next_start,
+        std::vector<std::pair<lineno_t, lineno_t>>& ranges
+    )
+        -> void
+    {
+        if (goes_in_private_fragment(n))
+        {
+            auto last = std::max(n.initializer->position().lineno, next_start - 1);
+            if (auto compound = n.initializer->get_if<compound_statement_node>()) {
+                last = compound->close_brace.lineno;
+            }
+            ranges.emplace_back(n.position().lineno, last);
+        }
+        if (
+            (n.is_type() || n.is_namespace())
+            && n.initializer
+            && n.initializer->is_compound()
+            )
+        {
+            auto compound = n.initializer->get_if<compound_statement_node>();
+            assert(compound);
+            auto nested = std::vector<declaration_node const*>{};
+            for (auto& statement : compound->statements) {
+                if (auto decl = statement->get_if<declaration_node>()) {
+                    nested.push_back(decl);
+                }
+            }
+            for (auto i = 0; i < std::ssize(nested); ++i) {
+                auto next = i + 1 < std::ssize(nested) ? nested[i+1]->position().lineno : compound->close_brace.lineno;
+                collect_private_fragment_lines(*nested[i], next, ranges);
+            }
+        }
+    }
+
+    //  Phase 0 emits namespace-scope declarations in three walks, so that each
+    //  thing is declared before what needs it, wherever it is written:
+    //    - declarations: namespaces, and the types outside 'ordered'
+    //    - ordered: the concepts types' template heads name (hoisted), the
+    //      concepts those name, and the types whose template heads name a
+    //      hoisted concept or another of these types (constrained), in rounds:
+    //      each round emits those whose hoisted concepts and constrained types
+    //      are already out, and a final round emits any left (a cycle). Hoisted
+    //      concepts can't use functions, declared in phase 1
+    //    - specializations: template specializations, after their primaries
+    enum class phase0_part_t : u8 { declarations, ordered, specializations };
+    phase0_part_t phase0_part = phase0_part_t::declarations;
+
+    //  The hoisted concepts, the constrained types, and for each of those the
+    //  names of the others it uses
+    std::set<declaration_node const*>                                     phase0_concepts;
+    std::set<declaration_node const*>                                     phase0_constrained_types;
+    std::map<declaration_node const*, std::set<std::string, std::less<>>> phase0_dependencies;
+
+    //  The state of the ordered walk's rounds
+    std::set<declaration_node const*> phase0_ordered_emitted;
+    bool phase0_ordered_progress    = false;
+    bool phase0_ordered_final_round = false;
+
+    //  Adds the identifiers in text that could name a namespace-scope concept
+    //  or type: not members ('.x', '..x', '->x', 'f()::x', 'T<U>::x'), not the
+    //  template's own parameters, and not names qualified by them ('T::value')
+    static auto add_phase0_candidates(
+        std::string_view                    text,
+        std::vector<std::string> const&     template_parameters,
+        std::set<std::string, std::less<>>& names
+    )
+        -> void
+    {
+        auto is_identifier_char = [](char c) {
+            return c == '_' || std::isalnum(static_cast<unsigned char>(c));
+        };
+        auto is_parameter = [&](std::string_view name) {
+            return std::ranges::find(template_parameters, name) != template_parameters.end();
+        };
+        auto i = std::size_t{0};
+        while (i < text.size())
+        {
+            if (!is_identifier_char(text[i])) {
+                ++i;
+                continue;
+            }
+            auto start = i;
+            while (i < text.size() && is_identifier_char(text[i])) {
+                ++i;
+            }
+            auto name = text.substr(start, i - start);
+            if (
+                std::isdigit(static_cast<unsigned char>(name.front()))
+                || is_parameter(name)
+                )
+            {
+                continue;
+            }
+
+            //  Look at what precedes the name
+            auto j = start;
+            while (j > 0 && text[j-1] == ' ') {
+                --j;
+            }
+            auto preceded_by = [&](std::string_view s) {
+                return j >= s.size() && text.substr(j - s.size(), s.size()) == s;
+            };
+            if (preceded_by(".") || preceded_by("->")) {
+                continue;
+            }
+            if (preceded_by("::"))
+            {
+                auto k = j - 2;
+                while (k > 0 && text[k-1] == ' ') {
+                    --k;
+                }
+                //  A member of a template-id or of a call's result
+                if (k > 0 && (text[k-1] == '>' || text[k-1] == ')')) {
+                    continue;
+                }
+                auto end = k;
+                while (k > 0 && is_identifier_char(text[k-1])) {
+                    --k;
+                }
+                if (is_parameter(text.substr(k, end - k))) {
+                    continue;
+                }
+            }
+            names.emplace(name);
+        }
+    }
+
+    static auto template_parameter_names(declaration_node const& n)
+        -> std::vector<std::string>
+    {
+        auto ret = std::vector<std::string>{};
+        if (n.template_parameters) {
+            for (auto& param : n.template_parameters->parameters) {
+                if (param->name()) {
+                    ret.push_back(param->name()->to_string());
+                }
+            }
+        }
+        return ret;
+    }
+
+    static auto declared_name(declaration_node const& n)
+        -> std::string_view
+    {
+        assert(n.identifier);
+        return n.identifier->identifier->as_string_view();
+    }
+
+    //  Walks n and the types and namespaces nested in it, collecting the names
+    //  each namespace-scope type's template head uses, and the namespace-scope
+    //  concepts
+    auto collect_phase0_candidates(
+        declaration_node const&                                                n,
+        std::map<declaration_node const*, std::set<std::string, std::less<>>>& type_names,
+        std::vector<declaration_node const*>&                                  concepts
+    )
+        -> void
+    {
+        if (
+            n.is_type()
+            && n.parent_is_namespace()
+            && n.identifier
+            && !n.is_specialization()
+            )
+        {
+            auto parameters = template_parameter_names(n);
+            auto& names = type_names[&n];
+            if (n.template_parameters) {
+                add_phase0_candidates(pretty_print_visualize(*n.template_parameters, 0, true), parameters, names);
+            }
+            if (n.requires_clause_expression) {
+                add_phase0_candidates(pretty_print_visualize(*n.requires_clause_expression, 0), parameters, names);
+            }
+        }
+
+        if (
+            n.is_concept()
+            && n.parent_is_namespace()
+            && n.identifier
+            && n.initializer
+            )
+        {
+            concepts.push_back(&n);
+        }
+
+        if (
+            (n.is_type() || n.is_namespace())
+            && n.initializer
+            && n.initializer->is_compound()
+            )
+        {
+            auto compound = n.initializer->get_if<compound_statement_node>();
+            assert(compound);
+            for (auto& statement : compound->statements) {
+                if (auto nested = statement->get_if<declaration_node>()) {
+                    collect_phase0_candidates(*nested, type_names, concepts);
+                }
+            }
+        }
+    }
+
+    //  Finds the hoisted concepts, the constrained types and their dependencies
+    //  for the translation unit's declarations
+    auto find_phase0_order(std::vector<declaration_node const*> const& declarations)
+        -> void
+    {
+        phase0_concepts.clear();
+        phase0_constrained_types.clear();
+        phase0_dependencies.clear();
+        phase0_ordered_emitted.clear();
+
+        auto type_names = std::map<declaration_node const*, std::set<std::string, std::less<>>>{};
+        auto concepts   = std::vector<declaration_node const*>{};
+        for (auto decl : declarations) {
+            collect_phase0_candidates(*decl, type_names, concepts);
+        }
+
+        //  The concepts types' template heads name, then the concepts those
+        //  name, until no concept adds one
+        auto wanted = std::set<std::string, std::less<>>{};
+        for (auto const& [type, names] : type_names) {
+            wanted.insert(names.begin(), names.end());
+        }
+        auto concept_names = std::map<declaration_node const*, std::set<std::string, std::less<>>>{};
+        for (auto changed = true; changed; )
+        {
+            changed = false;
+            for (auto concept_decl : concepts)
+            {
+                if (
+                    !phase0_concepts.contains(concept_decl)
+                    && wanted.contains(declared_name(*concept_decl))
+                    )
+                {
+                    phase0_concepts.insert(concept_decl);
+                    auto& used = concept_names[concept_decl];
+                    add_phase0_candidates(
+                        pretty_print_visualize(*concept_decl->initializer, 0),
+                        template_parameter_names(*concept_decl),
+                        used
+                    );
+                    wanted.insert(used.begin(), used.end());
+                    changed = true;
+                }
+            }
+        }
+
+        //  The types whose heads name a hoisted concept, then those whose heads
+        //  name one of those types, until no type is added
+        auto ordered_names = std::set<std::string, std::less<>>{};
+        for (auto concept_decl : phase0_concepts) {
+            ordered_names.emplace(declared_name(*concept_decl));
+        }
+        for (auto changed = true; changed; )
+        {
+            changed = false;
+            for (auto const& [type, names] : type_names)
+            {
+                if (
+                    !phase0_constrained_types.contains(type)
+                    && std::ranges::any_of(names, [&](auto const& name) { return ordered_names.contains(name); })
+                    )
+                {
+                    phase0_constrained_types.insert(type);
+                    ordered_names.emplace(declared_name(*type));
+                    changed = true;
+                }
+            }
+        }
+
+        //  A hoisted concept also waits for the constrained types it names
+        //  (it can name the other types, declared in the first walk)
+        auto keep_ordered = [&](declaration_node const* decl, std::set<std::string, std::less<>> names) {
+            std::erase_if(names, [&](auto const& name) {
+                return !ordered_names.contains(name) || name == declared_name(*decl);
+            });
+            phase0_dependencies[decl] = std::move(names);
+        };
+        for (auto concept_decl : phase0_concepts) {
+            keep_ordered(concept_decl, concept_names[concept_decl]);
+        }
+        for (auto type : phase0_constrained_types) {
+            keep_ordered(type, type_names[type]);
+        }
+    }
+
+    //  Whether a hoisted concept or constrained type can go out in this round
+    //  of the ordered walk
+    auto phase0_is_ready(declaration_node const& n)
+        -> bool
+    {
+        if (phase0_ordered_emitted.contains(&n)) {
+            return false;
+        }
+        if (phase0_ordered_final_round) {
+            return true;
+        }
+        //  Every hoisted concept and constrained type with a name it uses must
+        //  be out already
+        auto is_out = [&](std::set<declaration_node const*> const& kind, std::string_view name) {
+            return std::ranges::all_of(kind, [&](auto other) {
+                return declared_name(*other) != name || phase0_ordered_emitted.contains(other);
+            });
+        };
+        for (auto const& dependency : phase0_dependencies[&n]) {
+            if (
+                !is_out(phase0_concepts, dependency)
+                || !is_out(phase0_constrained_types, dependency)
+                )
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //  Which phase 0 walk emits n, a namespace-scope declaration other than a namespace
+    auto phase0_part_of(declaration_node const& n)
+        -> phase0_part_t
+    {
+        if (
+            phase0_concepts.contains(&n)
+            || phase0_constrained_types.contains(&n)
+            )
+        {
+            return phase0_part_t::ordered;
+        }
+        if (n.is_specialization()) {
+            return phase0_part_t::specializations;
+        }
+        return phase0_part_t::declarations;
+    }
+
+    //  Whether namespace n holds anything for the current phase 0 walk (or
+    //  round), so the walk doesn't print an empty namespace block
+    auto namespace_has_phase0_content(declaration_node const& n)
+        -> bool
+    {
+        if (
+            !n.initializer
+            || !n.initializer->is_compound()
+            )
+        {
+            return false;
+        }
+        auto compound = n.initializer->get_if<compound_statement_node>();
+        assert(compound);
+        for (auto& statement : compound->statements)
+        {
+            auto nested = statement->get_if<declaration_node>();
+            if (!nested) {
+                continue;
+            }
+            if (nested->is_namespace()) {
+                if (namespace_has_phase0_content(*nested)) {
+                    return true;
+                }
+            }
+            else if (
+                (nested->is_type() || nested->is_concept())
+                && phase0_part_of(*nested) == phase0_part
+                && (
+                    phase0_part != phase0_part_t::ordered
+                    || phase0_is_ready(*nested)
+                    )
+                )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     declaration_node const*   generating_assignment_from      = {};
     declaration_node const*   generating_move_from            = {};
     declaration_node const*   generating_postfix_inc_dec_from = {};
@@ -1366,6 +1886,34 @@ public:
         };
 
         auto emit_cpp1_line = [&](auto const& line) {
+            //  In a file with Cpp2, 'module :private;' is printed in phase 2, before
+            //  the private function bodies, not where it is in the source
+            if (
+                source.has_cpp2()
+                && line.cat == source_line::category::module_private_fragment
+                )
+            {
+                return true;
+            }
+
+            //  Cpp1 code after 'module :private;' would be printed before it, in the
+            //  interface (only Cpp2 function bodies are moved after the marker)
+            if (
+                source.has_cpp2()
+                && source.get_private_fragment_line() != 0
+                && curr_lineno > source.get_private_fragment_line()
+                && line.cat != source_line::category::empty
+                && line.cat != source_line::category::comment
+                )
+            {
+                errors.emplace_back(
+                    source_position(curr_lineno, 1),
+                    "Cpp1 code after 'module :private;' is not supported in a file with Cpp2 - "
+                    "move it before the marker (Cpp2 function bodies go into the private module fragment wherever the marker is)"
+                );
+                return false;
+            }
+
             if (
                 source.has_cpp2()
                 && line.cat == source_line::category::empty
@@ -1384,6 +1932,7 @@ public:
                 && line.cat != source_line::category::comment
                 && line.cat != source_line::category::module_directive
                 && line.cat != source_line::category::module_declaration
+                && line.cat != source_line::category::module_private_fragment
                 && line.cat != source_line::category::import
                 )
             {
@@ -1519,17 +2068,53 @@ public:
             printer.reset_line_to(1, true);
         }
 
-        for (auto& section : tokens.get_map())
+        //  Find the names that type templates use in their requires clauses, so
+        //  the concepts among them can be emitted in phase 0, ahead of the types'
+        //  forward declarations that need them
         {
-            assert (!section.second.empty());
+            auto all_declarations = std::vector<declaration_node const*>{};
+            for (auto& section : tokens.get_map()) {
+                for (auto& decl : parser.get_parse_tree_declarations_in_range(section.second)) {
+                    assert(decl);
+                    all_declarations.push_back(decl);
+                }
+            }
+            find_phase0_order(all_declarations);
+        }
 
-            //  Get the parse tree for this section and emit each forward declaration
-            auto decls = parser.get_parse_tree_declarations_in_range(section.second);
-            for (auto& decl : decls) {
-                assert(decl);
-                emit(*decl);
+        //  Phase 0 walks the declarations three times (see phase0_part_t)
+        for (auto part : { phase0_part_t::declarations, phase0_part_t::ordered, phase0_part_t::specializations })
+        {
+            phase0_part = part;
+            auto walk = [&] {
+                for (auto& section : tokens.get_map())
+                {
+                    assert (!section.second.empty());
+
+                    //  Get the parse tree for this section and emit each forward declaration
+                    auto decls = parser.get_parse_tree_declarations_in_range(section.second);
+                    for (auto& decl : decls) {
+                        assert(decl);
+                        emit(*decl);
+                    }
+                }
+            };
+            if (part == phase0_part_t::ordered)
+            {
+                //  Rounds until nothing more can go out, then the rest (a cycle)
+                do {
+                    phase0_ordered_progress = false;
+                    walk();
+                } while (phase0_ordered_progress);
+                phase0_ordered_final_round = true;
+                walk();
+                phase0_ordered_final_round = false;
+            }
+            else {
+                walk();
             }
         }
+        phase0_part = phase0_part_t::declarations;
 
 
         //---------------------------------------------------------------------
@@ -1655,16 +2240,63 @@ public:
             printer.reset_line_to(1, true);
         }
 
-        for (auto& section : tokens.get_map())
-        {
-            assert (!section.second.empty());
+        auto emit_phase2_declarations = [&] {
+            for (auto& section : tokens.get_map())
+            {
+                assert (!section.second.empty());
 
-            //  Get the parse tree for this section and emit each forward declaration
-            auto decls = parser.get_parse_tree_declarations_in_range(section.second);
-            for (auto& decl : decls) {
-                assert(decl);
-                emit(*decl);
+                //  Get the parse tree for this section and emit each forward declaration
+                auto decls = parser.get_parse_tree_declarations_in_range(section.second);
+                for (auto& decl : decls) {
+                    assert(decl);
+                    emit(*decl);
+                }
             }
+        };
+
+        //  A module unit with 'module :private;' (wherever it is in the source)
+        //  keeps all declarations and the definitions importers need in its
+        //  interface, and puts the other function bodies after the marker, in
+        //  the private module fragment
+        if (source.get_private_fragment_line() == 0) {
+            emit_phase2_declarations();
+        }
+        else {
+            auto top_level = std::vector<declaration_node const*>{};
+            for (auto& section : tokens.get_map()) {
+                for (auto& decl : parser.get_parse_tree_declarations_in_range(section.second)) {
+                    top_level.push_back(decl);
+                }
+            }
+            auto private_lines = std::vector<std::pair<lineno_t, lineno_t>>{};
+            for (auto i = 0; i < std::ssize(top_level); ++i) {
+                auto next = i + 1 < std::ssize(top_level)
+                    ? top_level[i+1]->position().lineno
+                    : std::numeric_limits<lineno_t>::max();
+                collect_private_fragment_lines(*top_level[i], next, private_lines);
+            }
+            auto is_private_line = [private_lines](lineno_t line) {
+                return std::ranges::any_of(private_lines, [line](auto const& range) {
+                    return range.first <= line && line <= range.second;
+                });
+            };
+
+            phase2_part = phase2_part_t::interface;
+            printer.set_comment_filter([is_private_line](lineno_t line) { return !is_private_line(line); });
+            emit_phase2_declarations();
+
+            printer.print_extra( "\nmodule :private;\n" );
+            if (!flag_clean_cpp1) {
+                printer.reset_line_to(1, true);
+            }
+
+            phase2_part = phase2_part_t::private_fragment;
+            printer.restart_comments();
+            printer.set_comment_filter(is_private_line);
+            emit_phase2_declarations();
+
+            phase2_part = phase2_part_t::whole;
+            printer.set_comment_filter({});
         }
 
         if (cpp1_filename.back() == 'h') {
@@ -3413,6 +4045,8 @@ public:
             std::vector<text_with_pos> text_chunks;
             source_position            open_pos;
             source_position            close_pos;
+            bool                       has_string_literal = false;
+            expression_list_node const* expr_list = {};
         };
 
         auto args = std::optional<text_chunks_with_parens_position>{};
@@ -3473,6 +4107,12 @@ public:
                 if (!i->expr_list->expressions.empty()) {
                     local_args.text_chunks = print_to_text_chunks(*i->expr_list);
                 }
+                local_args.expr_list = i->expr_list.get();
+                for (auto const& arg : i->expr_list->expressions) {
+                    if (is_string_literal_argument(arg)) {
+                        local_args.has_string_literal = true;
+                    }
+                }
 
                 flush_args();
                 args.emplace(std::move(local_args));
@@ -3492,6 +4132,10 @@ public:
                 //  The function name is the argument to the macro
                 auto funcname = print_to_string(*i->id_expr);
 
+                //  The same, as the _ARGS macros take it (see below): in parentheses,
+                //  after the qualifier in parentheses if there is one
+                auto funcname_for_args = "(" + funcname + ")";
+
                 //  First, build the UFCS macro name
 
                 auto ufcs_string = std::string("CPP2_UFCS");
@@ -3503,11 +4147,10 @@ public:
                         ufcs_string += "_QUALIFIED";
                         //  And split the unqualified id in the function name as two macro arguments
                         auto& id = *get<id_expression_node::qualified>(i->id_expr->id);
-                        funcname =
-                            "("
-                            + print_to_string(id, false)
-                            + "::),"
-                            + print_to_string(*cpp2::impl::assert_not_null(id.ids.back().id), 0, true, true);
+                        auto qualifier = "(" + print_to_string(id, false) + "::)";
+                        auto unqualified = print_to_string(*cpp2::impl::assert_not_null(id.ids.back().id), 0, true, true);
+                        funcname = qualifier + "," + unqualified;
+                        funcname_for_args = qualifier + ",(" + unqualified + ")";
                     }
                     ufcs_string += "_TEMPLATE";
                 }
@@ -3520,6 +4163,13 @@ public:
                 //  lambda would not be allowed, then add them here
                 if (
                     current_declarations.back()->is_namespace()
+                    //  An expression that belongs to a namespace-scope type itself
+                    //  (a specialization's template arguments, a requires clause)
+                    //  is outside any function
+                    || (
+                        current_declarations.back()->is_type()
+                        && current_declarations.back()->parent_is_namespace()
+                        )
                     || (
                         current_declarations.back()->is_parameter()
                         && !current_declarations.back()->is_statement_parameter()
@@ -3568,6 +4218,65 @@ public:
                     in_non_rvalue_context.push_back(true);
                     funcname = print_to_string(*i->id_expr);
                     in_non_rvalue_context.pop_back();
+                    funcname_for_args = "(" + funcname + ")";
+                }
+
+                //  A call with a string literal argument uses the _ARGS version, which
+                //  takes the arguments into the UFCS lambda's body instead of passing
+                //  them through its parameters, so the literal stays a constant
+                //  expression (as a std::format_string parameter needs). It exists for
+                //  the local forms only: a non-local lambda can't capture the arguments
+                //
+                //  Its lambda takes, after the object, one parameter per argument that
+                //  isn't a string literal, and a trailing pack for a pack expansion;
+                //  the argument list written into the macro forwards those. Those
+                //  arguments are passed to the lambda as usual, so they are evaluated
+                //  in the caller and their temporaries live to the end of its
+                //  expression. A call with a non-literal argument after a pack
+                //  expansion can't be written that way, so it uses the plain version
+                auto ufcs_args_params  = std::string{};     //  ", auto&& cpp2_ufcs_a0, ..."
+                auto ufcs_args_pattern = std::string{};     //  "\"{}\", CPP2_FORWARD(cpp2_ufcs_a0), ..."
+                auto ufcs_args_passed  = std::string{};     //  ", x, ..."
+                auto use_args_version =
+                    args.value().has_string_literal
+                    && (
+                        ufcs_string == "CPP2_UFCS"
+                        || ufcs_string == "CPP2_UFCS_MOVE"
+                        || ufcs_string == "CPP2_UFCS_FORWARD"
+                        || ufcs_string == "CPP2_UFCS_TEMPLATE"
+                        || ufcs_string == "CPP2_UFCS_QUALIFIED_TEMPLATE"
+                        );
+                if (use_args_version)
+                {
+                    assert(args.value().expr_list);
+                    auto index     = 0;
+                    auto seen_pack = false;
+                    for (auto const& x : args.value().expr_list->expressions)
+                    {
+                        if (!ufcs_args_pattern.empty()) {
+                            ufcs_args_pattern += ", ";
+                        }
+                        if (is_string_literal_argument(x)) {
+                            ufcs_args_pattern += print_to_string(*x.expr);
+                            continue;
+                        }
+                        if (seen_pack) {
+                            use_args_version = false;
+                            break;
+                        }
+                        auto argument = print_to_string(x, args.value().open_pos);
+                        ufcs_args_passed += ", " + argument;
+                        if (argument.ends_with("...")) {
+                            seen_pack = true;
+                            ufcs_args_params  += ", auto&&... cpp2_ufcs_rest";
+                            ufcs_args_pattern += "CPP2_FORWARD(cpp2_ufcs_rest)...";
+                        }
+                        else {
+                            auto name = "cpp2_ufcs_a" + std::to_string(index++);
+                            ufcs_args_params  += ", auto&& " + name;
+                            ufcs_args_pattern += "CPP2_FORWARD(" + name + ")";
+                        }
+                    }
                 }
 
                 //  Second, emit the UFCS argument list
@@ -3578,11 +4287,24 @@ public:
                 if (funcname.starts_with("cpp2::move(*this).")) {
                     prefix.emplace_back(funcname + "(", args.value().open_pos );
                 }
+                else if (use_args_version) {
+                    prefix.emplace_back(
+                        ufcs_string + "_ARGS((" + ufcs_args_params + "), " + funcname_for_args + ", " + ufcs_args_pattern + ")(",
+                        args.value().open_pos
+                    );
+                }
                 else {
                     prefix.emplace_back(ufcs_string + "(" + funcname + ")(", args.value().open_pos );
                 }
+
+                //  Suffixes are printed in reverse order: the arguments, then ")"
                 suffix.emplace_back(")", args.value().close_pos );
-                if (!args.value().text_chunks.empty()) {
+                if (use_args_version) {
+                    if (!ufcs_args_passed.empty()) {
+                        suffix.emplace_back(ufcs_args_passed, args.value().open_pos );
+                    }
+                }
+                else if (!args.value().text_chunks.empty()) {
                     for (auto&& e: args.value().text_chunks) {
                         suffix.push_back(e);
                     }
@@ -3723,13 +4445,15 @@ public:
                         && lit->get_token()->type() == lexeme::DecimalLiteral
                         )
                     {
-                        prefix.emplace_back( "CPP2_ASSERT_IN_BOUNDS_LITERAL(", i->op->position() );
+                        prefix.emplace_back( "CPP2_ASSERT_IN_BOUNDS_LITERAL((", i->op->position() );
                     }
                     else
                     {
-                        prefix.emplace_back( "CPP2_ASSERT_IN_BOUNDS(", i->op->position() );
+                        prefix.emplace_back( "CPP2_ASSERT_IN_BOUNDS((", i->op->position() );
                     }
-                    suffix.emplace_back( ", ", i->op->position() );
+                    //  The subscripted expression goes in parentheses, so a comma in it
+                    //  (as in a template argument list) doesn't split the macro's arguments
+                    suffix.emplace_back( "), ", i->op->position() );
                 }
                 //  If this is a .., emit . instead
                 else if( i->op->type() == lexeme::DotDot) {
@@ -4310,47 +5034,7 @@ public:
                 printer.print_cpp2(", ", n.position());
             }
             first = false;
-            auto is_out = false;
-
-            if (
-                x.pass != passing_style::in
-                && x.pass != passing_style::in_ref
-                ) 
-            {
-                assert(
-                    x.pass == passing_style::out
-                    || x.pass == passing_style::move
-                    || x.pass == passing_style::forward
-                );
-                if (x.pass == passing_style::out) {
-                    is_out = true;
-                    printer.print_cpp2("cpp2::impl::out(&", n.position());
-                }
-                else if (x.pass == passing_style::move) {
-                    printer.print_cpp2("std::move(", n.position());
-                }
-            }
-
-            if (is_out) {
-                in_non_rvalue_context.push_back(true);
-            }
-
-            assert(x.expr);
-            current_args.push_back( {x.pass} );
-            emit(*x.expr);
-            current_args.pop_back();
-
-            if (is_out) {
-                in_non_rvalue_context.pop_back();
-            }
-
-            if (
-                x.pass == passing_style::move
-                || x.pass == passing_style::out
-                )
-            {
-                printer.print_cpp2(")", n.position());
-            }
+            emit_argument(x, n.position());
         }
 
         if (add_parens) {
@@ -4358,6 +5042,66 @@ public:
         }
         //  We want to consume only one of these
         consumed_expression_list_parens();
+    }
+
+    //  (So print_to_string can print one argument)
+    auto emit(
+        expression_list_node::term const& x,
+        source_position                   pos
+    )
+        -> void
+    {
+        emit_argument(x, pos);
+    }
+
+    //  Emits one argument of an expression list, with its passing style
+    auto emit_argument(
+        expression_list_node::term const& x,
+        source_position                   pos
+    )
+        -> void
+    {
+        auto is_out = false;
+
+        if (
+            x.pass != passing_style::in
+            && x.pass != passing_style::in_ref
+            )
+        {
+            assert(
+                x.pass == passing_style::out
+                || x.pass == passing_style::move
+                || x.pass == passing_style::forward
+            );
+            if (x.pass == passing_style::out) {
+                is_out = true;
+                printer.print_cpp2("cpp2::impl::out(&", pos);
+            }
+            else if (x.pass == passing_style::move) {
+                printer.print_cpp2("std::move(", pos);
+            }
+        }
+
+        if (is_out) {
+            in_non_rvalue_context.push_back(true);
+        }
+
+        assert(x.expr);
+        current_args.push_back( {x.pass} );
+        emit(*x.expr);
+        current_args.pop_back();
+
+        if (is_out) {
+            in_non_rvalue_context.pop_back();
+        }
+
+        if (
+            x.pass == passing_style::move
+            || x.pass == passing_style::out
+            )
+        {
+            printer.print_cpp2(")", pos);
+        }
     }
 
 
@@ -4824,6 +5568,8 @@ public:
 
         printer.preempt_position_push( n.position() );
 
+        //  (parameter_is_generic says which parameters this makes 'auto'; keep
+        //  it in step with these conditions)
         if (
             type_id.is_wildcard()
             || is_dependent_parameter_type
@@ -5416,6 +6162,14 @@ public:
                 && parent->is_type()
                 )
             {
+                //  A specialization is named by its own template arguments,
+                //  qualified as written: std::hash<widget>::
+                if (parent->is_specialization()) {
+                    ret = parent->specialization_qualifier_string() + print_to_string(*parent->identifier) + "::" + ret;
+                    parent = parent->parent_declaration;
+                    continue;
+                }
+
                 auto list = std::string{""};
                 if (parent->template_parameters) {
                     auto separator = std::string{"<"};
@@ -5825,7 +6579,13 @@ public:
                         "requires( " + print_to_string(*parent->requires_clause_expression) + " )\n"
                         + parent_template_parameters;
                 }
-                if (parent->template_parameters) {
+                //  A member of an explicit specialization is defined without a
+                //  'template<>' for the specialization
+                if (
+                    parent->template_parameters
+                    && !parent->is_explicit_specialization()
+                    )
+                {
                     parent_template_parameters =
                         "template " + print_to_string( *parent->template_parameters, false, true )
                         + " " + parent_template_parameters;
@@ -5886,15 +6646,84 @@ public:
             return;
         }
 
-        //  In phase 0, only need to consider namespaces and types
+        //  In phase 0, only need to consider namespaces, types and the hoisted
+        //  concepts (see phase0_part_t): those are emitted whole in phase 0,
+        //  because a type template's declaration there already uses them. Other
+        //  concepts stay in phase 1, after the type definitions and with the
+        //  function declarations, so they can still use functions
+        auto is_namespace_scope_concept = phase0_concepts.contains(&n);
 
         if (
             printer.get_phase() == printer.phase0_type_decls
             && !n.is_namespace()
             && !n.is_type()
+            && !is_namespace_scope_concept
             )
         {
             return;
+        }
+
+        if (
+            is_namespace_scope_concept
+            && printer.get_phase() != printer.phase0_type_decls
+            )
+        {
+            return;
+        }
+
+        //  Each phase 0 walk emits its own declarations. A namespace is printed
+        //  only if it holds something for the walk, except that the declarations
+        //  walk prints every namespace, as phase 0 always has
+        if (printer.get_phase() == printer.phase0_type_decls)
+        {
+            if (n.is_namespace())
+            {
+                if (
+                    phase0_part != phase0_part_t::declarations
+                    && !namespace_has_phase0_content(n)
+                    )
+                {
+                    return;
+                }
+            }
+            else
+            {
+                if (phase0_part_of(n) != phase0_part) {
+                    return;
+                }
+                if (phase0_part == phase0_part_t::ordered)
+                {
+                    if (!phase0_is_ready(n)) {
+                        return;
+                    }
+                    phase0_ordered_emitted.insert(&n);
+                    phase0_ordered_progress = true;
+                }
+            }
+        }
+
+        //  With 'module :private;', phase 2 runs twice: the interface pass emits
+        //  everything but the function bodies that can be private, and the
+        //  private pass only those (walking namespaces and types to reach them)
+        if (
+            printer.get_phase() == printer.phase2_func_defs
+            && phase2_part != phase2_part_t::whole
+            && (n.parent_is_namespace() || n.parent_is_type())
+            )
+        {
+            auto is_private = goes_in_private_fragment(n);
+            if (
+                (phase2_part == phase2_part_t::interface && is_private)
+                || (
+                    phase2_part == phase2_part_t::private_fragment
+                    && !is_private
+                    && !n.is_namespace()
+                    && !n.is_type()
+                    )
+                )
+            {
+                return;
+            }
         }
 
         //  If this is a generated declaration (negative source line number),
@@ -6289,7 +7118,14 @@ public:
                 )
             && (
                 !n.is_concept()
-                || printer.get_phase() == printer.phase1_type_defs_func_decls
+                || (
+                    is_namespace_scope_concept
+                    && printer.get_phase() == printer.phase0_type_decls
+                    )
+                || (
+                    !is_namespace_scope_concept
+                    && printer.get_phase() == printer.phase1_type_defs_func_decls
+                    )
                 )
             )
         {
@@ -6316,6 +7152,9 @@ public:
                 }
 
                 printer.print_cpp2("class ", n.position());
+                //  A specialization's name carries its template arguments, and the
+                //  qualifier of the template it specializes: class std::hash<widget>
+                printer.print_cpp2(n.specialization_qualifier_string(), n.position());
                 emit(*n.identifier);
 
                 //  Type declaration
@@ -6459,7 +7298,10 @@ public:
                 //  Ensure we emit the { even if there are only bases in the type
                 start_body();
 
-                auto id     = print_to_string(*n.identifier);
+                //  Inside the class, a specialization is named by its injected
+                //  class name, without the template arguments (a constructor
+                //  can't be declared with them)
+                auto id     = n.is_specialization() ? n.name()->to_string() : print_to_string(*n.identifier);
                 auto indent = static_cast<size_t>(
                                 std::clamp(
                                     compound_stmt->body_indent,
@@ -6686,11 +7528,14 @@ public:
                         break;case parameter_declaration_node::modifier::final_:
                             suffix2 += " final";
                         break;default:
+                            //  A constructor with no argument or one argument is explicit
+                            //  unless 'this' is 'implicit' (handled above). parameter_count()
+                            //  includes 'this', so one argument is a count of 2
                             if (
                                 func->is_constructor()
                                 && !func->is_constructor_with_that()
                                 && generating_assignment_from != &n
-                                && func->parameter_count() < 2
+                                && func->parameter_count() <= 2
                                 )
                             {
                                 prefix += "explicit ";
@@ -7087,6 +7932,11 @@ public:
                 (
                     n.parent_is_namespace()
                     && printer.get_phase() >= printer.phase1_type_defs_func_decls
+                    )
+                ||
+                (
+                    is_namespace_scope_concept
+                    && printer.get_phase() == printer.phase0_type_decls
                     )
                 ||
                 (

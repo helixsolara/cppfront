@@ -121,7 +121,7 @@ requires (true) inline CPP2_CONSTEXPR T outer::object_alias{ 42 };
             ret += strlen(s) - 10 + CPP2_UFCS(strlen)(s) * (16 / CPP2_ASSERT_NOT_ZERO(CPP2_TYPEOF(16),(3 & 2))) % CPP2_ASSERT_NOT_ZERO_LITERAL(CPP2_TYPEOF((16 / CPP2_ASSERT_NOT_ZERO(CPP2_TYPEOF(16),(3 & 2)))),3);
 
             map<int const,string> m {}; 
-            CPP2_ASSERT_IN_BOUNDS_LITERAL(m, 0) = cpp2::impl::as_<string>("har");
+            CPP2_ASSERT_IN_BOUNDS_LITERAL((m), 0) = cpp2::impl::as_<string>("har");
             ret -= CPP2_UFCS(length)(h("x", m));
             static_cast<void>(cpp2::move(m));
 
@@ -153,7 +153,7 @@ requires (true) inline CPP2_CONSTEXPR T outer::object_alias{ 42 };
 
             if (cpp2::cpp2_default.is_active() && !(true) ) { cpp2::cpp2_default.report_violation(""); }
 
-            return [_0 = (s + CPP2_ASSERT_IN_BOUNDS_LITERAL(m, 0))]() mutable -> std::string { return _0;  }(); 
+            return [_0 = (s + CPP2_ASSERT_IN_BOUNDS_LITERAL((m), 0))]() mutable -> std::string { return _0;  }(); 
         }
 
 #line 56 "pure2-print.cpp2"

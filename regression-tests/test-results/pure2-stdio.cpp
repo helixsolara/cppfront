@@ -29,7 +29,7 @@
 [[nodiscard]] auto main() -> int{
     std::string s {"Fred"}; 
     auto myfile {fopen("xyzzy", "w")}; 
-    static_cast<void>(CPP2_UFCS(fprintf)(myfile, "Hello %s with UFCS!", CPP2_UFCS(c_str)(cpp2::move(s))));
+    static_cast<void>(CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (fprintf), "Hello %s with UFCS!", CPP2_FORWARD(cpp2_ufcs_a0))(myfile, CPP2_UFCS(c_str)(cpp2::move(s))));
     static_cast<void>(CPP2_UFCS(fclose)(cpp2::move(myfile)));
 }
 

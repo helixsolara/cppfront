@@ -33,7 +33,7 @@ class myclass {
     public: auto operator=(myclass&& that) noexcept -> myclass& ;
 
 #line 22 "pure2-types-smf-and-that-3-provide-mvconstruct-and-mvassign.cpp2"
-    public: myclass(cpp2::impl::in<std::string> x);
+    public: explicit myclass(cpp2::impl::in<std::string> x);
 #line 22 "pure2-types-smf-and-that-3-provide-mvconstruct-and-mvassign.cpp2"
     public: auto operator=(cpp2::impl::in<std::string> x) -> myclass& ;
 
@@ -117,24 +117,24 @@ auto main() -> int{
     std::cout << "----------------------  ------------  ------------------------------------------------------\n";
 
     myclass x {"Henry"}; 
-    CPP2_UFCS(print)(x, "   construct     ", "\n");
+    CPP2_UFCS_ARGS((), (print), "   construct     ", "\n")(x);
     x = "Clara";
-    CPP2_UFCS(print)(x, "   assign        ", "\n");
+    CPP2_UFCS_ARGS((), (print), "   assign        ", "\n")(x);
 
     auto y {x}; 
-    CPP2_UFCS(print)(y, "   cp-construct  ", " <- ");
-    CPP2_UFCS(print)(x, "", "\n");
+    CPP2_UFCS_ARGS((), (print), "   cp-construct  ", " <- ")(y);
+    CPP2_UFCS_ARGS((), (print), "", "\n")(x);
 
     auto z {std::move(x)}; 
-    CPP2_UFCS(print)(z, "   mv-construct  ", " <- ");
-    CPP2_UFCS(print)(cpp2::move(x), "", "\n");
+    CPP2_UFCS_ARGS((), (print), "   mv-construct  ", " <- ")(z);
+    CPP2_UFCS_ARGS((), (print), "", "\n")(cpp2::move(x));
 
     // z = y;
     // z.print("   cp-assign     ", " <- ");
     // y.print("", "\n");
 
     z = { std::move(y) };
-    CPP2_UFCS(print)(cpp2::move(z), "   mv-assign     ", " <- ");
-    CPP2_UFCS(print)(cpp2::move(y), "", "\n");
+    CPP2_UFCS_ARGS((), (print), "   mv-assign     ", " <- ")(cpp2::move(z));
+    CPP2_UFCS_ARGS((), (print), "", "\n")(cpp2::move(y));
 }
 
