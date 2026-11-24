@@ -1,7 +1,8 @@
 
 //  Copyright 2022-2026 Herb Sutter
 //  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
-//  Modified in the helixsolara/cppfront fork to allow authoring C++20 module units.
+//  Modified in the helixsolara/cppfront fork to allow authoring C++20 module units,
+//  and to pass bytes above 127 safely to the <cctype> classifiers.
 //  
 //  Part of the Cppfront Project, under the Apache License v2.0 with LLVM Exceptions.
 //  See https://github.com/hsutter/cppfront/blob/main/LICENSE for license information.
@@ -2276,7 +2277,7 @@ public:
                     !statement.empty()
                     && (
                         statement.back() == ';'
-                        || isspace(statement.back())
+                        || isspace(as_ctype(statement.back()))
                         )
                     )
                 {

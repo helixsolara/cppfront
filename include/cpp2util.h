@@ -1,6 +1,8 @@
 
 //  Copyright 2022-2026 Herb Sutter
 //  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//  Modified in the helixsolara/cppfront fork to pass bytes above 127 safely to the
+//  <cctype> classifiers.
 //  
 //  Part of the Cppfront Project, under the Apache License v2.0 with LLVM Exceptions.
 //  See https://github.com/hsutter/cppfront/blob/main/LICENSE for license information.
@@ -612,7 +614,7 @@ inline auto split_string_list(std::string_view str)
     std::vector<std::string_view> ret;
 
     auto is_id_char = [](char c) { 
-        return std::isalnum(c) || c == '_';
+        return std::isalnum(static_cast<unsigned char>(c)) || c == '_';
     };
 
     auto pos = decltype(std::ssize(str)){ 0 };

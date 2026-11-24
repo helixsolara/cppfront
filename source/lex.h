@@ -1,6 +1,8 @@
 
 //  Copyright 2022-2026 Herb Sutter
 //  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//  Modified in the helixsolara/cppfront fork to pass bytes above 127 safely to the
+//  <cctype> classifiers.
 //  
 //  Part of the Cppfront Project, under the Apache License v2.0 with LLVM Exceptions.
 //  See https://github.com/hsutter/cppfront/blob/main/LICENSE for license information.
@@ -1619,7 +1621,7 @@ auto lex_line(
                     line[i] == 'n'
                     && peek1 == 'o'
                     && peek2 == 't'
-                    && isspace(peek3)
+                    && isspace(as_ctype(peek3))
                     )
                 {
                     store(3, lexeme::Not);
@@ -1860,7 +1862,7 @@ auto lex_line(
                 else if (auto j = starts_with_identifier({&line[i], std::size(line)-i}))
                 {
                     if (
-                        !isspace(peek(-1))
+                        !isspace(as_ctype(peek(-1)))
                         && !tokens.empty()
                         && is_literal(tokens.back().type())
                         )
@@ -1892,7 +1894,7 @@ auto lex_line(
 
                 //  Anything else should be whitespace
                 //
-                else if (!isspace(line[i])) {
+                else if (!isspace(as_ctype(line[i]))) {
                     errors.emplace_back(
                         source_position(lineno, i),
                         std::string("unexpected text '") + line[i] + "'",

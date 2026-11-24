@@ -1,7 +1,8 @@
 
 //  Copyright 2022-2026 Herb Sutter
 //  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
-//  Modified in the helixsolara/cppfront fork to allow authoring C++20 module units.
+//  Modified in the helixsolara/cppfront fork to allow authoring C++20 module units,
+//  and to pass bytes above 127 safely to the <cctype> classifiers.
 //  
 //  Part of the Cppfront Project, under the Apache License v2.0 with LLVM Exceptions.
 //  See https://github.com/hsutter/cppfront/blob/main/LICENSE for license information.
@@ -282,6 +283,17 @@ auto is_binary_digit(char c)
         ;
 }
 
+//  The <cctype> classifiers (isspace, isdigit, ...) take an int that must be
+//  EOF or an unsigned char's value. A plain char above 127, such as a byte of
+//  UTF-8 text or a byte order mark, is negative where char is signed (MSVC),
+//  which is undefined behavior and a debug CRT assertion. Pass chars through this.
+auto as_ctype(char c)
+    -> int
+{
+    return static_cast<unsigned char>(c);
+}
+
+
 //G digit: one of
 //G     binary-digit
 //G     one of '2' '3' '4' '5' '6' '7' '8' '9'
@@ -289,7 +301,7 @@ auto is_binary_digit(char c)
 auto is_digit(char c)
     -> bool
 {
-    return isdigit(c);
+    return isdigit(as_ctype(c));
 }
 
 //G hexadecimal-digit:
@@ -299,7 +311,7 @@ auto is_digit(char c)
 auto is_hexadecimal_digit(char c)
     -> bool
 {
-    return isxdigit(c);
+    return isxdigit(as_ctype(c));
 }
 
 //G nondigit:
@@ -311,7 +323,7 @@ auto is_nondigit(char c)
     -> bool
 {
     return
-        isalpha(c)
+        isalpha(as_ctype(c))
         || c == '_'
         ;
 }
@@ -512,7 +524,7 @@ auto to_upper_and_underbar(std::string_view s)
 {
     auto ret = std::string{s};
     for (char& c : ret) {
-        if (std::isalnum(c)) { c = to_upper(c); }
+        if (std::isalnum(as_ctype(c))) { c = to_upper(c); }
         else                 { c = '_'; }
     }
     return ret;
@@ -526,9 +538,9 @@ auto is_empty_or_a_decimal_number(std::string_view s)
     if (size == 0) { return true; }
 
     auto i = 0;
-    while (i < size && isspace(s[i]) ) { ++i; }
-    while (i < size && isdigit(s[i]) ) { ++i; }
-    while (i < size && isspace(s[i]) ) { ++i; }
+    while (i < size && isspace(as_ctype(s[i])) ) { ++i; }
+    while (i < size && isdigit(as_ctype(s[i])) ) { ++i; }
+    while (i < size && isspace(as_ctype(s[i])) ) { ++i; }
     return i == size;
 }
 
