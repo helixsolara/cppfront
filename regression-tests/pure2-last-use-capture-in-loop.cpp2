@@ -1,0 +1,100 @@
+//  A use inside a loop isn't a last use, since the loop may run it again. That
+//  holds for a capture too: a function expression written inside a loop is
+//  evaluated on every iteration, so its capture copies
+
+print: (copy p: std::shared_ptr<int>) =
+{
+    std::cout << "print: " << p* << "\n";
+}
+
+main: (args) =
+{
+    //  True, but not known to be at compile time
+    yes := args.size() < 100u;
+
+    //  A function expression in a 'while' body
+    a := std::make_shared<int>(1);
+    i := 0;
+    while i < 3 next i++
+    {
+        f := :() -> int = a$* + i$;
+        std::cout << "a: " << f() << "\n";
+    }
+
+    //  ... in a 'for' body
+    b := std::make_shared<int>(10);
+    for (1, 2) do (n)
+    {
+        f := :() -> int = b$* + n$;
+        std::cout << "b: " << f() << "\n";
+    }
+
+    //  ... in a 'do' body, with the capture in a branch of its own body
+    c := std::make_shared<int>(20);
+    j := 0;
+    do
+    {
+        f := :() -> int = { if yes$ { return c$* + j$; } return 0; };
+        std::cout << "c: " << f() << "\n";
+    }
+    next j++
+    while j < 2;
+
+    //  ... in a branch inside a loop
+    d := std::make_shared<int>(30);
+    k := 0;
+    while k < 2 next k++
+    {
+        if yes
+        {
+            f := :() -> int = d$* + k$;
+            std::cout << "d: " << f() << "\n";
+        }
+    }
+
+    //  A function expression inside another one, in a loop (the inner one
+    //  captures the outer one's copy, since C++ can't capture through it)
+    e := std::make_shared<int>(40);
+    m := 0;
+    while m < 2 next m++
+    {
+        f := :() -> int = { y := e$; g := :() -> int = y$*; return g() + m$; };
+        std::cout << "e: " << f() << "\n";
+    }
+
+    //  A plain use in a loop that also holds an unrelated function expression
+    p := std::make_shared<int>(60);
+    q := 0;
+    while q < 2 next q++
+    {
+        print(p);
+        one := :() -> int = 1;
+        _ = one();
+    }
+
+    //  ... and one that also holds a name hiding the local
+    r := std::make_shared<int>(70);
+    s := 0;
+    while s < 2 next s++
+    {
+        print(r);
+        {
+            r := std::make_shared<int>(-1);
+            print(r);
+        }
+    }
+
+    //  A function expression in the loop's condition
+    t := std::make_shared<int>(2);
+    u := 0;
+    while :() -> bool = u$ < t$*;() next u++
+    {
+        std::cout << "t: " << u << "\n";
+    }
+
+    //  Outside a loop, the last capture still moves
+    z := std::make_shared<int>(50);
+    first := :() -> int = z$*;
+    last := :() -> int = z$* + 1;
+    std::cout << "z: " << first() << " " << last() << "\n";
+}

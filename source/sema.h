@@ -990,6 +990,9 @@ private:
                 }
                 assert(symbols[i].start);
 
+                //  Function expressions and hidden names inside the loop push
+                //  their ranges after this one, so remember where it is
+                auto loop_range = std::ssize(pos_ranges);
                 pos_ranges.emplace_back(true, i);
 
                 //  Scan forward to the end of this loop
@@ -1013,7 +1016,7 @@ private:
                     ++i;
                 }
                 assert(sym && sym->identifier == loop_id && sym->is_deactivation());
-                pos_ranges.back().last = i;
+                pos_ranges[loop_range].last = i;
             }
         }
 
@@ -1089,11 +1092,17 @@ private:
 
             //  If found in a loop, it wasn't a last use
             //  Set up to pop out of the scope containing the loop
-            if (pos_ranges.back().within(i))
+            //  Ranges of function expressions and hidden names inside the loop
+            //  lie above it, so look past them; they are dropped with it
+            auto loop = std::find_if(
+                pos_ranges.rbegin(),
+                pos_ranges.rend(),
+                [&](pos_range const& r) { return r.is_loop && r.within(i); }
+                );
+            if (loop != pos_ranges.rend())
             {
-                assert(pos_ranges.back().is_loop && "Other ranges are skipped.");
-                i = pos_ranges.back().first; // The scope to pop is the scope of the loop
-                pos_ranges.pop_back();
+                i = loop->first; // The scope to pop is the scope of the loop
+                pos_ranges.erase(std::prev(loop.base()), pos_ranges.end());
             }
             else
             {
@@ -1108,21 +1117,21 @@ private:
                         || pass == passing_style::forward
                         )
                     );
+
+                //  Continue from a capture's function expression, so the
+                //  branches its body contains aren't taken for ours
+                if (auto capture = std::find_if(
+                        capture_positions.begin(),
+                        capture_positions.end(),
+                        [&](capture_pos const& c) { return c.use == i; }
+                        );
+                    capture != capture_positions.end()
+                    )
+                {
+                    i = capture->function_expression;
+                }
             }
             //found = true;
-
-            //  Continue from a capture's function expression, so the
-            //  branches its body contains aren't taken for ours
-            if (auto capture = std::find_if(
-                    capture_positions.begin(),
-                    capture_positions.end(),
-                    [&](capture_pos const& c) { return c.use == i; }
-                    );
-                capture != capture_positions.end()
-                )
-            {
-                i = capture->function_expression;
-            }
 
             compound_sym const* comp = nullptr;
 
