@@ -1450,7 +1450,7 @@ template<typename CharT, bool negate> [[nodiscard]] auto word_boundary_token_mat
     {
         context<Iter> ctx {start, end}; 
         auto r {search_with_context(ctx, start)}; 
-        return search_return<Iter>(r.matched, cpp2::move(ctx), cpp2::move(r).pos); 
+        return search_return<Iter>(r.matched, cpp2::move(ctx), r.pos); 
     }
 
 #line 882 "cpp2regex.h2"

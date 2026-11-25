@@ -1661,7 +1661,7 @@ auto main() -> int{
     write_output("do while loop", x, x_d, y, y_d, ad_name::ad_test::do_while_loop_d(x, x_d, y, y_d));
     write_output("for loop", x, x_d, y, y_d, ad_name::ad_test::for_loop_d(x, x_d, y, y_d));
     write_output("tye_outer.a + y", x, x_d, y, y_d, ad_name::ad_test::type_outer_use_d(x, x_d, y, y_d));
-    write_output("type_outer.add(y)", x, x_d, y, y_d, ad_name::ad_test::type_outer_call_d(x, x_d, y, cpp2::move(y_d)));
+    write_output("type_outer.add(y)", x, x_d, y, y_d, ad_name::ad_test::type_outer_call_d(x, x_d, y, y_d));
 
     double x_b {0.0}; 
     double y_b {0.0}; 
@@ -1681,13 +1681,13 @@ auto main() -> int{
     write_output_reverse("x + x * y", x, x_b, y, y_b, w_b, ad_name::ad_test_reverse::add_mul_b(x, x_b, y, y_b, w_b));
     write_output_reverse("sin(x-y)", x, x_b, y, y_b, w_b, ad_name::ad_test_reverse::sin_call_b(x, x_b, y, y_b, w_b));
     write_output_reverse("x * func(x-y)", x, x_b, y, y_b, w_b, ad_name::ad_test_reverse::func_call_b(x, x_b, y, y_b, w_b));
-    write_output_reverse("x * func_outer(x-y)", x, x_b, y, y_b, w_b, ad_name::ad_test_reverse::func_outer_call_b(x, x_b, cpp2::move(y), y_b, w_b));
+    write_output_reverse("x * func_outer(x-y)", x, x_b, y, y_b, w_b, ad_name::ad_test_reverse::func_outer_call_b(x, x_b, y, y_b, w_b));
 
     static_cast<void>(cpp2::move(x_b));
     static_cast<void>(cpp2::move(y_b));
     static_cast<void>(cpp2::move(w_b));
 
-    auto r_twice {ad_test_twice::mul_1_d_d2(x, x_d, cpp2::move(x_d), 0.0)}; 
+    auto r_twice {ad_test_twice::mul_1_d_d2(x, x_d, x_d, 0.0)}; 
     std::cout << "2nd order diff of x*x at " + cpp2::to_string(cpp2::move(x)) + " = " + cpp2::to_string(cpp2::move(r_twice).r_d_d2) + "" << std::endl;
 }
 

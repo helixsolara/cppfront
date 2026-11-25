@@ -210,6 +210,6 @@ auto main() -> int{
     write_output("log(x)", x, x_d, test_log(x, x_d));
     write_output("exp(x)", x, x_d, test_exp(x, x_d));
     write_output("sin(x)", x, x_d, test_sin(x, x_d));
-    write_output("cos(x)", x, x_d, test_cos(cpp2::move(x), cpp2::move(x_d)));
+    write_output("cos(x)", x, x_d, test_cos(x, x_d));
 }
 

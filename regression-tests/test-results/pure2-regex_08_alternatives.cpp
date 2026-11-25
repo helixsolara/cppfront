@@ -168,7 +168,7 @@ auto main() -> int;
             ++next; // Skip {
             auto group {extract_until(next, '}')}; 
             ++next; // Skip }
-            result += CPP2_UFCS(group)(r, cpp2::move(group));
+            result += CPP2_UFCS(group)(r, group);
           }
           else {if (*cpp2::impl::assert_not_null(next) == '[') {
             ++next; // Skip [
@@ -189,7 +189,7 @@ auto main() -> int;
         }
         else {if (std::isdigit(*cpp2::impl::assert_not_null(next))) {
           auto group {extract_group_and_advance(next)}; 
-          result += CPP2_UFCS(group)(r, cpp2::move(group));
+          result += CPP2_UFCS(group)(r, group);
         }
         else {
           std::cerr << "Not implemented";

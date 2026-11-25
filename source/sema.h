@@ -91,6 +91,9 @@ struct identifier_sym {
     bool is_after_dot = false;
     bool safe_to_move = true;
     int safe_to_move_context = 0;
+    //  The function expression the use is written in (0 for none), so two
+    //  captures can be told apart from one closure's
+    int function_expression = 0;
     token const* identifier = {};
 
     identifier_sym(
@@ -2276,6 +2279,11 @@ public:
     //
     int                               scope_depth                              = 0;
     int                               safe_to_move_context                     = 1;
+    int                               function_expression_count                = 0;
+    std::vector<int>                  function_expressions                     = {0};
+    //  For each function expression being visited, the use scope it is
+    //  written in, where its captures are evaluated
+    std::vector<int>                  function_expression_scopes               = {};
     bool                              started_standalone_assignment_expression = false;
     bool                              started_postfix_expression               = false;
     std::vector<bool>                 started_postfix_operators_               = {false};
@@ -2316,7 +2324,13 @@ public:
         return std::span{indices_of_uses_per_scope[i]}.subspan(j);
     }
 
-    //  Mark uses that are not safe to move
+    //  Mark uses that are not safe to move: uses of one name in one expression
+    //  whose order C++ doesn't fix, such as the operands of most operators
+    //  and the arguments of a call (each starts a safe-to-move context), since
+    //  moving at either may leave the other a moved-from value. A capture is
+    //  evaluated with its function expression, so two function expressions
+    //  capturing the name, or a capture beside a plain use, count too; only
+    //  the captures of one closure are evaluated together
     auto pop_uses_in_expression() -> void
     {
         auto identifier = [](symbol& s) { return &std::get<symbol::active::identifier>(s.sym); };
@@ -2332,8 +2346,11 @@ public:
                     i != j
                     && *x->identifier == *y->identifier
                     && x->safe_to_move_context != y->safe_to_move_context
-                    && !x->is_captured
-                    && !y->is_captured
+                    && !(
+                        x->is_captured
+                        && y->is_captured
+                        && x->function_expression == y->function_expression
+                        )
                     )
                 {
                     x->safe_to_move = false;
@@ -2510,6 +2527,8 @@ public:
     auto start(expression_list_node::term const&n, int) -> void
     {
         is_out_expression = (n.pass == passing_style::out);
+        //  Each argument is evaluated in no set order with the others
+        ++safe_to_move_context;
     }
 
     auto start(function_returns_tag const&, int) -> void
@@ -2551,6 +2570,11 @@ public:
 
     auto start(declaration_node const& n, int) -> void
     {
+        if (n.is_function_expression()) {
+            function_expressions.push_back(++function_expression_count);
+            function_expression_scopes.push_back(unchecked_narrow<int>(std::ssize(indices_of_uses_per_scope) - 1));
+        }
+
         //  Skip the first declaration after entering a 'for',
         //  which is the for loop parameter - it's always
         //  guaranteed to be initialized by the language
@@ -2588,6 +2612,12 @@ public:
 
     auto end(declaration_node const& n, int) -> void
     {
+        if (n.is_function_expression()) {
+            assert(std::ssize(function_expressions) > 1);
+            function_expressions.pop_back();
+            function_expression_scopes.pop_back();
+        }
+
         if (auto f = std::get_if<declaration_node::a_function>(&n.type)) {
             if (std::get_if<function_type_node::list>(&(*f)->returns)) {
                 pop_lifetime_scope();
@@ -2676,13 +2706,22 @@ public:
             ++safe_to_move_context;
         }
 
-        //  Mark captures
+        //  Mark captures. A capture is also a use in the scope the function
+        //  expression is written in, where it is evaluated, so the
+        //  expression around the function expression sees it
         if (t.type() == lexeme::Dollar)
         {
-            for (auto i : get(uses_at_postfix_expression))
+            auto captured = std::vector<int>(
+                get(uses_at_postfix_expression).begin(),
+                get(uses_at_postfix_expression).end()
+            );
+            for (auto i : captured)
             {
                 auto& sym = std::get<symbol::active::identifier>(symbols[i].sym);
                 assert(sym.is_use());
+                if (!sym.is_captured && !function_expression_scopes.empty()) {
+                    indices_of_uses_per_scope[function_expression_scopes.back()].push_back(i);
+                }
                 sym.is_captured = true;
             }
         }
@@ -2837,14 +2876,16 @@ public:
                 //  the declaration, not the token in the decl's name itself)
                 //  including an implicit 'this' access of a member name
                 auto push_use = [&](token const* u, bool is_dot_access = false) {
-                    this->push_use( identifier_sym(
+                    auto use = identifier_sym(
                         false,
                         u,
                         {},
                         !inside_next_expression,
                         safe_to_move_context,
                         is_dot_access
-                    ) );
+                    );
+                    use.function_expression = function_expressions.back();
+                    this->push_use( use );
                 };
                 if (accessed_member_for_ufcs) {
                     if (t == "(") {

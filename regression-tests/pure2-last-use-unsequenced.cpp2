@@ -1,0 +1,39 @@
+//  The arguments of one call are evaluated in no set order (MSVC goes right
+//  to left), and so are the operands of most operators, so a name used in
+//  two of them isn't moved at either: the other may see it already moved.
+//  The same holds for two function expressions capturing the name in one
+//  expression, and for a capture beside a plain use
+
+pair: (copy a: std::shared_ptr<int>, copy b: std::shared_ptr<int>) -> int = a* + b*;
+
+two: (f: std::function<() -> int>, g: std::function<() -> int>) -> int = f() + g();
+
+mixed: (copy a: std::shared_ptr<int>, g: std::function<() -> int>) -> int = a* + g();
+
+value: (copy a: std::shared_ptr<int>) -> int = a*;
+
+main: () =
+{
+    //  The same name in two arguments of one call
+    p := std::make_shared<int>(1);
+    std::cout << "pair: " << pair(p, p) << "\n";
+
+    //  ... in an argument of a nested call
+    n := std::make_shared<int>(2);
+    std::cout << "nested: " << pair(n, std::make_shared<int>(value(n))) << "\n";
+
+    //  Two function expressions capturing it, in two arguments
+    q := std::make_shared<int>(3);
+    std::cout << "two captures: " << two(:() -> int = q$*;, :() -> int = q$*;) << "\n";
+
+    //  A plain use beside a capture
+    r := std::make_shared<int>(4);
+    std::cout << "mixed: " << mixed(r, :() -> int = r$*;) << "\n";
+
+    //  Still moved: a single use in a call, and two captures in one closure
+    s := std::make_shared<int>(5);
+    std::cout << "single: " << pair(std::make_shared<int>(0), s) << "\n";
+    u := std::make_shared<int>(6);
+    one := :() -> int = u$* + u$*;
+    std::cout << "one closure: " << one() << "\n";
+}
