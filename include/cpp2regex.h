@@ -210,7 +210,7 @@ template<typename CharT, typename Iter, int max_groups> class reverse_match_cont
             public: ReverseIter begin; 
             public: ReverseIter end; 
 
-    public: reverse_match_context(auto const& forward_context_);
+    public: explicit reverse_match_context(auto const& forward_context_);
 #line 133 "cpp2regex.h2"
     public: auto operator=(auto const& forward_context_) -> reverse_match_context& ;
 
@@ -288,7 +288,7 @@ template<typename Func> class on_return
  {
     private: Func func; 
 
-    public: on_return(Func const& f);
+    public: explicit on_return(Func const& f);
 #line 213 "cpp2regex.h2"
     public: auto operator=(Func const& f) -> on_return& ;
 
@@ -785,44 +785,44 @@ template <typename Iter> match_return<Iter>::match_return(){}
     template <typename CharT, typename Iter, int max_groups> [[nodiscard]] auto match_context<CharT,Iter,max_groups>::get_string_end() const& -> decltype(auto) { return end;  }
 
 #line 75 "cpp2regex.h2"
-    template <typename CharT, typename Iter, int max_groups> [[nodiscard]] auto match_context<CharT,Iter,max_groups>::get_group(auto const& group) const& -> decltype(auto) { return CPP2_ASSERT_IN_BOUNDS(groups, group);  }
+    template <typename CharT, typename Iter, int max_groups> [[nodiscard]] auto match_context<CharT,Iter,max_groups>::get_group(auto const& group) const& -> decltype(auto) { return CPP2_ASSERT_IN_BOUNDS((groups), group);  }
 
 #line 77 "cpp2regex.h2"
     template <typename CharT, typename Iter, int max_groups> [[nodiscard]] auto match_context<CharT,Iter,max_groups>::get_group_end(auto const& group) const& -> int{
-        if (cpp2::impl::cmp_greater_eq(group,max_groups) || !(CPP2_ASSERT_IN_BOUNDS(groups, group).matched)) {
+        if (cpp2::impl::cmp_greater_eq(group,max_groups) || !(CPP2_ASSERT_IN_BOUNDS((groups), group).matched)) {
             return 0; 
         }
-        return cpp2::unchecked_narrow<int>(std::distance(begin, CPP2_ASSERT_IN_BOUNDS(groups, group).end)); 
+        return cpp2::unchecked_narrow<int>(std::distance(begin, CPP2_ASSERT_IN_BOUNDS((groups), group).end)); 
     }
 #line 83 "cpp2regex.h2"
     template <typename CharT, typename Iter, int max_groups> [[nodiscard]] auto match_context<CharT,Iter,max_groups>::get_group_start(auto const& group) const& -> int{
-        if (cpp2::impl::cmp_greater_eq(group,max_groups) || !(CPP2_ASSERT_IN_BOUNDS(groups, group).matched)) {
+        if (cpp2::impl::cmp_greater_eq(group,max_groups) || !(CPP2_ASSERT_IN_BOUNDS((groups), group).matched)) {
             return 0; 
         }
-        return cpp2::unchecked_narrow<int>(std::distance(begin, CPP2_ASSERT_IN_BOUNDS(groups, group).start)); 
+        return cpp2::unchecked_narrow<int>(std::distance(begin, CPP2_ASSERT_IN_BOUNDS((groups), group).start)); 
     }
 #line 89 "cpp2regex.h2"
     template <typename CharT, typename Iter, int max_groups> [[nodiscard]] auto match_context<CharT,Iter,max_groups>::get_group_string(auto const& group) const& -> std::string{
-        if (cpp2::impl::cmp_greater_eq(group,max_groups) || !(CPP2_ASSERT_IN_BOUNDS(groups, group).matched)) {
+        if (cpp2::impl::cmp_greater_eq(group,max_groups) || !(CPP2_ASSERT_IN_BOUNDS((groups), group).matched)) {
             return ""; 
         }
-        return std::string(CPP2_ASSERT_IN_BOUNDS(groups, group).start, CPP2_ASSERT_IN_BOUNDS(groups, group).end); 
+        return std::string(CPP2_ASSERT_IN_BOUNDS((groups), group).start, CPP2_ASSERT_IN_BOUNDS((groups), group).end); 
     }
 
 #line 96 "cpp2regex.h2"
     template <typename CharT, typename Iter, int max_groups> auto match_context<CharT,Iter,max_groups>::set_group_end(auto const& group, auto const& pos) & -> void{
-        CPP2_ASSERT_IN_BOUNDS(groups, group).end = pos;
-        CPP2_ASSERT_IN_BOUNDS(groups, group).matched = true;
+        CPP2_ASSERT_IN_BOUNDS((groups), group).end = pos;
+        CPP2_ASSERT_IN_BOUNDS((groups), group).matched = true;
     }
 
 #line 101 "cpp2regex.h2"
     template <typename CharT, typename Iter, int max_groups> auto match_context<CharT,Iter,max_groups>::set_group_invalid(auto const& group) & -> void{
-        CPP2_ASSERT_IN_BOUNDS(groups, group).matched = false;
+        CPP2_ASSERT_IN_BOUNDS((groups), group).matched = false;
     }
 
 #line 105 "cpp2regex.h2"
     template <typename CharT, typename Iter, int max_groups> auto match_context<CharT,Iter,max_groups>::set_group_start(auto const& group, auto const& pos) & -> void{
-        CPP2_ASSERT_IN_BOUNDS(groups, group).start = pos;
+        CPP2_ASSERT_IN_BOUNDS((groups), group).start = pos;
     }
 
 #line 109 "cpp2regex.h2"

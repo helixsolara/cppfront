@@ -1930,7 +1930,7 @@ class autodiff_diff_code {
            public: std::string rws_primal {""}; 
     public: std::string rws_backprop {""}; 
 
-    public: autodiff_diff_code(cpp2::impl::in<autodiff_context*> ctx_);
+    public: explicit autodiff_diff_code(cpp2::impl::in<autodiff_context*> ctx_);
 #line 4690 "reflect.h2"
     public: auto operator=(cpp2::impl::in<autodiff_context*> ctx_) -> autodiff_diff_code& ;
 
@@ -1971,7 +1971,7 @@ class autodiff_activity_check: public simple_traverser {
            public: autodiff_context* ctx; 
            public: bool active {false}; 
 
-    public: autodiff_activity_check(cpp2::impl::in<autodiff_context*> ctx_);
+    public: explicit autodiff_activity_check(cpp2::impl::in<autodiff_context*> ctx_);
 
 #line 4742 "reflect.h2"
     public: auto traverse(cpp2::impl::in<meta::type_declaration> t) -> void override;
@@ -1996,7 +1996,7 @@ class autodiff_handler_base {
 
     public: autodiff_diff_code diff; 
 
-    public: autodiff_handler_base(cpp2::impl::in<autodiff_context*> ctx_);
+    public: explicit autodiff_handler_base(cpp2::impl::in<autodiff_context*> ctx_);
 #line 4835 "reflect.h2"
     public: auto operator=(cpp2::impl::in<autodiff_context*> ctx_) -> autodiff_handler_base& ;
 
@@ -2018,7 +2018,7 @@ class autodiff_expression_handler: public simple_traverser, public autodiff_hand
     public: std::string fwd_expr {""}; 
     public: std::string rws_expr {""}; 
 
-    public: autodiff_expression_handler(cpp2::impl::in<autodiff_context*> ctx_);
+    public: explicit autodiff_expression_handler(cpp2::impl::in<autodiff_context*> ctx_);
 
 #line 4862 "reflect.h2"
     public: [[nodiscard]] auto add_suffix_if_not_wildcard(cpp2::impl::in<std::string> lhs, cpp2::impl::in<std::string> suffix) const& -> std::string;
@@ -2318,7 +2318,7 @@ class regex_token
  {
     public: std::string string_rep; 
 
-    public: regex_token(cpp2::impl::in<std::string> str);
+    public: explicit regex_token(cpp2::impl::in<std::string> str);
 
 #line 6337 "reflect.h2"
     public: explicit regex_token();
@@ -2396,7 +2396,7 @@ class regex_token_empty
 : public regex_token {
 
 #line 6402 "reflect.h2"
-    public: regex_token_empty(cpp2::impl::in<std::string> str);
+    public: explicit regex_token_empty(cpp2::impl::in<std::string> str);
 
 #line 6406 "reflect.h2"
     public: auto generate_code([[maybe_unused]] generation_context& unnamed_param_2) const -> void override;
@@ -2420,7 +2420,7 @@ class regex_token_list
 #line 6420 "reflect.h2"
     public: token_vec tokens; 
 
-    public: regex_token_list(cpp2::impl::in<token_vec> t);
+    public: explicit regex_token_list(cpp2::impl::in<token_vec> t);
 
 #line 6427 "reflect.h2"
     public: auto generate_code(generation_context& ctx) const -> void override;
@@ -2800,7 +2800,7 @@ class alternative_token_gen
 #line 7209 "reflect.h2"
     private: token_vec alternatives; 
 
-    public: alternative_token_gen(cpp2::impl::in<token_vec> a);
+    public: explicit alternative_token_gen(cpp2::impl::in<token_vec> a);
 
 #line 7216 "reflect.h2"
     public: auto generate_code(generation_context& ctx) const -> void override;
@@ -2829,7 +2829,7 @@ class any_token
 : public regex_token_check {
 
 #line 7274 "reflect.h2"
-    public: any_token(cpp2::impl::in<bool> single_line);
+    public: explicit any_token(cpp2::impl::in<bool> single_line);
 
 #line 7278 "reflect.h2"
     public: [[nodiscard]] static auto parse(parse_context& ctx) -> token_ptr;
@@ -3289,7 +3289,7 @@ namespace meta {
     [[nodiscard]] auto compiler_services::get_argument(cpp2::impl::in<int> index) & -> std::string{
         metafunctions_used = true;
         if (([_0 = 0, _1 = index, _2 = CPP2_UFCS(ssize)(metafunction_args)]{ return cpp2::impl::cmp_less_eq(_0,_1) && cpp2::impl::cmp_less(_1,_2); }())) {
-            return CPP2_ASSERT_IN_BOUNDS(metafunction_args, index); 
+            return CPP2_ASSERT_IN_BOUNDS((metafunction_args), index); 
         }
         return ""; 
     }
@@ -4167,73 +4167,73 @@ template <String Name, typename Term> template <typename T> auto binary_expressi
     template <String Name, typename Term> [[nodiscard]] auto binary_expression<Name,Term>::get_terms() const& -> auto{
         if constexpr (std::is_same_v<Term,is_as_expression_node>) {
             std::vector<term_t<is_as_expression>> ret {}; 
-            static_cast<void>(CPP2_UFCS(emplace_back)(ret, "", CPP2_UFCS(get)((*cpp2::impl::assert_not_null((*this).n)).expr), (*this)));
+            static_cast<void>(CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0, auto&& cpp2_ufcs_a1), (emplace_back), "", CPP2_FORWARD(cpp2_ufcs_a0), CPP2_FORWARD(cpp2_ufcs_a1))(ret, CPP2_UFCS(get)((*cpp2::impl::assert_not_null((*this).n)).expr), (*this)));
             for ( auto const& t : (*cpp2::impl::assert_not_null((*this).n)).terms ) {static_cast<void>(CPP2_UFCS(emplace_back)(ret, *cpp2::impl::assert_not_null(t.op), CPP2_UFCS(get)(t.expr), (*this))); }
             return ret; 
         }
         if constexpr (std::is_same_v<Term,multiplicative_expression_node>) {
             std::vector<term_t<multiplicative_expression>> ret {}; 
-            static_cast<void>(CPP2_UFCS(emplace_back)(ret, "", CPP2_UFCS(get)((*cpp2::impl::assert_not_null((*this).n)).expr), (*this)));
+            static_cast<void>(CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0, auto&& cpp2_ufcs_a1), (emplace_back), "", CPP2_FORWARD(cpp2_ufcs_a0), CPP2_FORWARD(cpp2_ufcs_a1))(ret, CPP2_UFCS(get)((*cpp2::impl::assert_not_null((*this).n)).expr), (*this)));
             for ( auto const& t : (*cpp2::impl::assert_not_null((*this).n)).terms ) {static_cast<void>(CPP2_UFCS(emplace_back)(ret, *cpp2::impl::assert_not_null(t.op), CPP2_UFCS(get)(t.expr), (*this))); }
             return ret; 
         }
         if constexpr (std::is_same_v<Term,additive_expression_node>)        {
             std::vector<term_t<additive_expression>> ret {}; 
-            static_cast<void>(CPP2_UFCS(emplace_back)(ret, "", CPP2_UFCS(get)((*cpp2::impl::assert_not_null((*this).n)).expr), (*this)));
+            static_cast<void>(CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0, auto&& cpp2_ufcs_a1), (emplace_back), "", CPP2_FORWARD(cpp2_ufcs_a0), CPP2_FORWARD(cpp2_ufcs_a1))(ret, CPP2_UFCS(get)((*cpp2::impl::assert_not_null((*this).n)).expr), (*this)));
             for ( auto const& t : (*cpp2::impl::assert_not_null((*this).n)).terms ) {static_cast<void>(CPP2_UFCS(emplace_back)(ret, *cpp2::impl::assert_not_null(t.op), CPP2_UFCS(get)(t.expr), (*this))); }
             return ret; 
         }
         if constexpr (std::is_same_v<Term,shift_expression_node>)           {
             std::vector<term_t<shift_expression>> ret {}; 
-            static_cast<void>(CPP2_UFCS(emplace_back)(ret, "", CPP2_UFCS(get)((*cpp2::impl::assert_not_null((*this).n)).expr), (*this)));
+            static_cast<void>(CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0, auto&& cpp2_ufcs_a1), (emplace_back), "", CPP2_FORWARD(cpp2_ufcs_a0), CPP2_FORWARD(cpp2_ufcs_a1))(ret, CPP2_UFCS(get)((*cpp2::impl::assert_not_null((*this).n)).expr), (*this)));
             for ( auto const& t : (*cpp2::impl::assert_not_null((*this).n)).terms ) {static_cast<void>(CPP2_UFCS(emplace_back)(ret, *cpp2::impl::assert_not_null(t.op), CPP2_UFCS(get)(t.expr), (*this))); }
             return ret; 
         }
         if constexpr (std::is_same_v<Term,compare_expression_node>)         {
             std::vector<term_t<compare_expression>> ret {}; 
-            static_cast<void>(CPP2_UFCS(emplace_back)(ret, "", CPP2_UFCS(get)((*cpp2::impl::assert_not_null((*this).n)).expr), (*this)));
+            static_cast<void>(CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0, auto&& cpp2_ufcs_a1), (emplace_back), "", CPP2_FORWARD(cpp2_ufcs_a0), CPP2_FORWARD(cpp2_ufcs_a1))(ret, CPP2_UFCS(get)((*cpp2::impl::assert_not_null((*this).n)).expr), (*this)));
             for ( auto const& t : (*cpp2::impl::assert_not_null((*this).n)).terms ) {static_cast<void>(CPP2_UFCS(emplace_back)(ret, *cpp2::impl::assert_not_null(t.op), CPP2_UFCS(get)(t.expr), (*this))); }
             return ret; 
         }
         if constexpr (std::is_same_v<Term,relational_expression_node>)      {
             std::vector<term_t<relational_expression>> ret {}; 
-            static_cast<void>(CPP2_UFCS(emplace_back)(ret, "", CPP2_UFCS(get)((*cpp2::impl::assert_not_null((*this).n)).expr), (*this)));
+            static_cast<void>(CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0, auto&& cpp2_ufcs_a1), (emplace_back), "", CPP2_FORWARD(cpp2_ufcs_a0), CPP2_FORWARD(cpp2_ufcs_a1))(ret, CPP2_UFCS(get)((*cpp2::impl::assert_not_null((*this).n)).expr), (*this)));
             for ( auto const& t : (*cpp2::impl::assert_not_null((*this).n)).terms ) {static_cast<void>(CPP2_UFCS(emplace_back)(ret, *cpp2::impl::assert_not_null(t.op), CPP2_UFCS(get)(t.expr), (*this))); }
             return ret; 
         }
         if constexpr (std::is_same_v<Term,equality_expression_node>)        {
             std::vector<term_t<equality_expression>> ret {}; 
-            static_cast<void>(CPP2_UFCS(emplace_back)(ret, "", CPP2_UFCS(get)((*cpp2::impl::assert_not_null((*this).n)).expr), (*this)));
+            static_cast<void>(CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0, auto&& cpp2_ufcs_a1), (emplace_back), "", CPP2_FORWARD(cpp2_ufcs_a0), CPP2_FORWARD(cpp2_ufcs_a1))(ret, CPP2_UFCS(get)((*cpp2::impl::assert_not_null((*this).n)).expr), (*this)));
             for ( auto const& t : (*cpp2::impl::assert_not_null((*this).n)).terms ) {static_cast<void>(CPP2_UFCS(emplace_back)(ret, *cpp2::impl::assert_not_null(t.op), CPP2_UFCS(get)(t.expr), (*this))); }
             return ret; 
         }
         if constexpr (std::is_same_v<Term,bit_and_expression_node>)         {
             std::vector<term_t<bit_and_expression>> ret {}; 
-            static_cast<void>(CPP2_UFCS(emplace_back)(ret, "", CPP2_UFCS(get)((*cpp2::impl::assert_not_null((*this).n)).expr), (*this)));
+            static_cast<void>(CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0, auto&& cpp2_ufcs_a1), (emplace_back), "", CPP2_FORWARD(cpp2_ufcs_a0), CPP2_FORWARD(cpp2_ufcs_a1))(ret, CPP2_UFCS(get)((*cpp2::impl::assert_not_null((*this).n)).expr), (*this)));
             for ( auto const& t : (*cpp2::impl::assert_not_null((*this).n)).terms ) {static_cast<void>(CPP2_UFCS(emplace_back)(ret, *cpp2::impl::assert_not_null(t.op), CPP2_UFCS(get)(t.expr), (*this))); }
             return ret; 
         }
         if constexpr (std::is_same_v<Term,bit_xor_expression_node>)         {
             std::vector<term_t<bit_xor_expression>> ret {}; 
-            static_cast<void>(CPP2_UFCS(emplace_back)(ret, "", CPP2_UFCS(get)((*cpp2::impl::assert_not_null((*this).n)).expr), (*this)));
+            static_cast<void>(CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0, auto&& cpp2_ufcs_a1), (emplace_back), "", CPP2_FORWARD(cpp2_ufcs_a0), CPP2_FORWARD(cpp2_ufcs_a1))(ret, CPP2_UFCS(get)((*cpp2::impl::assert_not_null((*this).n)).expr), (*this)));
             for ( auto const& t : (*cpp2::impl::assert_not_null((*this).n)).terms ) {static_cast<void>(CPP2_UFCS(emplace_back)(ret, *cpp2::impl::assert_not_null(t.op), CPP2_UFCS(get)(t.expr), (*this))); }
             return ret; 
         }
         if constexpr (std::is_same_v<Term,bit_or_expression_node>)          {
             std::vector<term_t<bit_or_expression>> ret {}; 
-            static_cast<void>(CPP2_UFCS(emplace_back)(ret, "", CPP2_UFCS(get)((*cpp2::impl::assert_not_null((*this).n)).expr), (*this)));
+            static_cast<void>(CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0, auto&& cpp2_ufcs_a1), (emplace_back), "", CPP2_FORWARD(cpp2_ufcs_a0), CPP2_FORWARD(cpp2_ufcs_a1))(ret, CPP2_UFCS(get)((*cpp2::impl::assert_not_null((*this).n)).expr), (*this)));
             for ( auto const& t : (*cpp2::impl::assert_not_null((*this).n)).terms ) {static_cast<void>(CPP2_UFCS(emplace_back)(ret, *cpp2::impl::assert_not_null(t.op), CPP2_UFCS(get)(t.expr), (*this))); }
             return ret; 
         }
         if constexpr (std::is_same_v<Term,logical_and_expression_node>)     {
             std::vector<term_t<logical_and_expression>> ret {}; 
-            static_cast<void>(CPP2_UFCS(emplace_back)(ret, "", CPP2_UFCS(get)((*cpp2::impl::assert_not_null((*this).n)).expr), (*this)));
+            static_cast<void>(CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0, auto&& cpp2_ufcs_a1), (emplace_back), "", CPP2_FORWARD(cpp2_ufcs_a0), CPP2_FORWARD(cpp2_ufcs_a1))(ret, CPP2_UFCS(get)((*cpp2::impl::assert_not_null((*this).n)).expr), (*this)));
             for ( auto const& t : (*cpp2::impl::assert_not_null((*this).n)).terms ) {static_cast<void>(CPP2_UFCS(emplace_back)(ret, *cpp2::impl::assert_not_null(t.op), CPP2_UFCS(get)(t.expr), (*this))); }
             return ret; 
         }
         if constexpr (std::is_same_v<Term,logical_or_expression_node>)      {
             std::vector<term_t<logical_or_expression>> ret {}; 
-            static_cast<void>(CPP2_UFCS(emplace_back)(ret, "", CPP2_UFCS(get)((*cpp2::impl::assert_not_null((*this).n)).expr), (*this)));
+            static_cast<void>(CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0, auto&& cpp2_ufcs_a1), (emplace_back), "", CPP2_FORWARD(cpp2_ufcs_a0), CPP2_FORWARD(cpp2_ufcs_a1))(ret, CPP2_UFCS(get)((*cpp2::impl::assert_not_null((*this).n)).expr), (*this)));
             for ( auto const& t : (*cpp2::impl::assert_not_null((*this).n)).terms ) {static_cast<void>(CPP2_UFCS(emplace_back)(ret, *cpp2::impl::assert_not_null(t.op), CPP2_UFCS(get)(t.expr), (*this))); }
             return ret; 
         }
@@ -5199,7 +5199,7 @@ iteration_statement::iteration_statement(iteration_statement&& that) noexcept
 #line 1519 "reflect.h2"
 auto add_virtual_destructor(meta::type_declaration& t) -> void
 {
-    CPP2_UFCS(add_member)(t, "operator=: (virtual move this) = { }");
+    CPP2_UFCS_ARGS((), (add_member), "operator=: (virtual move this) = { }")(t);
 }
 
 #line 1525 "reflect.h2"
@@ -5224,24 +5224,24 @@ auto interface(meta::type_declaration& t) -> void
 
     for ( auto& m : CPP2_UFCS(get_members)(t) ) 
     {
-        CPP2_UFCS(require)(m, !(CPP2_UFCS(is_object)(m)), 
-                   "interfaces may not contain data objects");
+        CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (require), CPP2_FORWARD(cpp2_ufcs_a0), "interfaces may not contain data objects")(m, !(CPP2_UFCS(is_object)(m))
+                   );
         if (CPP2_UFCS(is_function)(m)) {
             auto mf {CPP2_UFCS(as_function)(m)}; 
-            CPP2_UFCS(require)(mf, !(CPP2_UFCS(is_copy_or_move)(mf)), 
-                        "interfaces may not copy or move; consider a virtual clone() instead");
-            CPP2_UFCS(require)(mf, !(CPP2_UFCS(has_initializer)(mf)), 
-                        "interface functions must not have a function body; remove the '=' initializer");
-            CPP2_UFCS(require)(mf, CPP2_UFCS(make_public)(mf), 
-                        "interface functions must be public");
+            CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (require), CPP2_FORWARD(cpp2_ufcs_a0), "interfaces may not copy or move; consider a virtual clone() instead")(mf, !(CPP2_UFCS(is_copy_or_move)(mf))
+                        );
+            CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (require), CPP2_FORWARD(cpp2_ufcs_a0), "interface functions must not have a function body; remove the '=' initializer")(mf, !(CPP2_UFCS(has_initializer)(mf))
+                        );
+            CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (require), CPP2_FORWARD(cpp2_ufcs_a0), "interface functions must be public")(mf, CPP2_UFCS(make_public)(mf)
+                        );
             CPP2_UFCS(default_to_virtual)(mf);
             has_dtor |= CPP2_UFCS(is_destructor)(cpp2::move(mf));
         }
     }
 
     //  Add public default constructor + protected copy/move operations
-    CPP2_UFCS(add_member)(t, "operator=: (out this) = { }");
-    CPP2_UFCS(add_member)(t, "protected operator=: (out this, that) = { }");
+    CPP2_UFCS_ARGS((), (add_member), "operator=: (out this) = { }")(t);
+    CPP2_UFCS_ARGS((), (add_member), "protected operator=: (out this, that) = { }")(t);
 
     //  Add public virtual destructor
     if (!(cpp2::move(has_dtor))) {
@@ -5276,13 +5276,13 @@ auto polymorphic_base(meta::type_declaration& t) -> void
         if (CPP2_UFCS(is_default_access)(mf)) {
             CPP2_UFCS(default_to_public)(mf);
         }
-        CPP2_UFCS(require)(mf, !(CPP2_UFCS(is_copy_or_move)(mf)), 
-                    "polymorphic base types may not copy or move; consider a virtual clone() instead");
+        CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (require), CPP2_FORWARD(cpp2_ufcs_a0), "polymorphic base types may not copy or move; consider a virtual clone() instead")(mf, !(CPP2_UFCS(is_copy_or_move)(mf))
+                    );
         if (CPP2_UFCS(is_destructor)(mf)) {
             has_dtor = true;
-            CPP2_UFCS(require)(mf, ((CPP2_UFCS(is_public)(mf) || CPP2_UFCS(is_default_access)(mf)) && CPP2_UFCS(is_virtual)(mf)) 
-                        || (CPP2_UFCS(is_protected)(mf) && !(CPP2_UFCS(is_virtual)(mf))), 
-                        "a polymorphic base type destructor must be public and virtual, or protected and nonvirtual");
+            CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (require), CPP2_FORWARD(cpp2_ufcs_a0), "a polymorphic base type destructor must be public and virtual, or protected and nonvirtual")(mf, ((CPP2_UFCS(is_public)(mf) || CPP2_UFCS(is_default_access)(mf)) && CPP2_UFCS(is_virtual)(mf)) || (CPP2_UFCS(is_protected)(mf) && !(CPP2_UFCS(is_virtual)(mf)))
+
+                        );
         }
     }
 
@@ -5322,7 +5322,7 @@ auto ordered_impl(
 
     for ( auto& mf : CPP2_UFCS(get_member_functions)(t) ) 
     {
-        if (CPP2_UFCS(has_name)(mf, "operator<=>")) {
+        if (CPP2_UFCS_ARGS((), (has_name), "operator<=>")(mf)) {
             has_spaceship = true;
             auto return_name {CPP2_UFCS(get_unnamed_return_type)(mf)}; 
             if (CPP2_UFCS(find)(return_name, ordering) == return_name.npos) 
@@ -5398,16 +5398,13 @@ auto copyable(meta::type_declaration& t) -> void
             || smfs.inout_this_move_that)) 
 
     {
-        CPP2_UFCS(error)(t, 
-            "this type is partially copyable/movable - when you provide "
-            "any of the more-specific operator= signatures, you must also provide "
-            "the one with the general signature (out this, that); alternatively, "
-            "consider removing all the operator= functions and let them all be "
-            "generated for you with default memberwise semantics"
+        CPP2_UFCS_ARGS((), (error), "this type is partially copyable/movable - when you provide ""any of the more-specific operator= signatures, you must also provide ""the one with the general signature (out this, that); alternatively, ""consider removing all the operator= functions and let them all be ""generated for you with default memberwise semantics")(t
+
+#line 1719 "reflect.h2"
         );
     }
     else {if (!(cpp2::move(smfs).out_this_in_that)) {
-        CPP2_UFCS(add_member)(t, "operator=: (out this, that) = { }");
+        CPP2_UFCS_ARGS((), (add_member), "operator=: (out this, that) = { }")(t);
     }}
 }
 
@@ -5427,18 +5424,17 @@ auto copy_constructible(meta::type_declaration& t) -> void
     if ( !(smfs.out_this_in_that) 
         && smfs.out_this_move_that) 
     {
-        CPP2_UFCS(error)(t, 
-            "this type is partially copy/move constructible - when you provide "
-            "the (out this, move that) operator= signature, you must also provide "
-            "the one with the general signature (out this, that)"
+        CPP2_UFCS_ARGS((), (error), "this type is partially copy/move constructible - when you provide ""the (out this, move that) operator= signature, you must also provide ""the one with the general signature (out this, that)")(t
+
+#line 1745 "reflect.h2"
         );
     }
     else {if (
         !(smfs.out_this_in_that) 
         && !(smfs.out_this_move_that)) 
     {
-        CPP2_UFCS(add_member)(t, "operator=: (out this,      that) = { }");
-        CPP2_UFCS(add_member)(t, "operator=: (out this, move that) = { }");
+        CPP2_UFCS_ARGS((), (add_member), "operator=: (out this,      that) = { }")(t);
+        CPP2_UFCS_ARGS((), (add_member), "operator=: (out this, move that) = { }")(t);
     }}
 }
 
@@ -5452,8 +5448,8 @@ auto copy_constructible(meta::type_declaration& t) -> void
 #line 1763 "reflect.h2"
 auto hashable(meta::type_declaration& t) -> void
 {
-    CPP2_UFCS(require)(t, !(CPP2_UFCS(empty)(CPP2_UFCS(get_member_objects)(t))), 
-               "a hashable type must have at least one data member");
+    CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (require), CPP2_FORWARD(cpp2_ufcs_a0), "a hashable type must have at least one data member")(t, !(CPP2_UFCS(empty)(CPP2_UFCS(get_member_objects)(t)))
+               );
 
     std::string hash {"    hash: (this) -> size_t = {\n"
                         "        ret: size_t = 0;"}; 
@@ -5491,14 +5487,14 @@ auto basic_value(meta::type_declaration& t) -> void
     auto has_default_ctor {false}; 
     for ( auto& mf : CPP2_UFCS(get_member_functions)(t) ) {
         has_default_ctor |= CPP2_UFCS(is_default_constructor)(mf);
-        CPP2_UFCS(require)(mf, !(CPP2_UFCS(is_protected)(mf)) && !(CPP2_UFCS(is_virtual)(mf)), 
-                    "a value type may not have a protected or virtual function");
-        CPP2_UFCS(require)(mf, !(CPP2_UFCS(is_destructor)(mf)) || CPP2_UFCS(is_public)(mf) || CPP2_UFCS(is_default_access)(mf), 
-                    "a value type may not have a non-public destructor");
+        CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (require), CPP2_FORWARD(cpp2_ufcs_a0), "a value type may not have a protected or virtual function")(mf, !(CPP2_UFCS(is_protected)(mf)) && !(CPP2_UFCS(is_virtual)(mf))
+                    );
+        CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (require), CPP2_FORWARD(cpp2_ufcs_a0), "a value type may not have a non-public destructor")(mf, !(CPP2_UFCS(is_destructor)(mf)) || CPP2_UFCS(is_public)(mf) || CPP2_UFCS(is_default_access)(mf)
+                    );
     }
 
     if (!(cpp2::move(has_default_ctor))) {
-        CPP2_UFCS(add_member)(t, "operator=: (out this) = { }");
+        CPP2_UFCS_ARGS((), (add_member), "operator=: (out this) = { }")(t);
     }
 }
 
@@ -5561,10 +5557,10 @@ auto cpp1_rule_of_zero(meta::type_declaration& t) -> void
 {
     for ( auto& mf : CPP2_UFCS(get_member_functions)(t) ) 
     {
-        CPP2_UFCS(require)(t, !(CPP2_UFCS(is_constructor_with_that)(mf)) 
-                   && !(CPP2_UFCS(is_assignment_with_that)(mf)) 
-                   && !(CPP2_UFCS(is_destructor)(mf)), 
-                   "the rule of zero requires no copy/move/destructor functions");
+        CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (require), CPP2_FORWARD(cpp2_ufcs_a0), "the rule of zero requires no copy/move/destructor functions")(t, !(CPP2_UFCS(is_constructor_with_that)(mf)) && !(CPP2_UFCS(is_assignment_with_that)(mf)) && !(CPP2_UFCS(is_destructor)(mf))
+
+#line 1872 "reflect.h2"
+                   );
     }
     CPP2_UFCS(disable_member_function_generation)(t);
 }
@@ -5609,14 +5605,14 @@ auto cpp2_struct(meta::type_declaration& t) -> void
 
     for ( auto& m : CPP2_UFCS(get_members)(t) ) 
     {
-        CPP2_UFCS(require)(m, CPP2_UFCS(make_public)(m), 
-                   "all struct members must be public");
+        CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (require), CPP2_FORWARD(cpp2_ufcs_a0), "all struct members must be public")(m, CPP2_UFCS(make_public)(m)
+                   );
         if (CPP2_UFCS(is_function)(m)) {
             auto mf {CPP2_UFCS(as_function)(m)}; 
-            CPP2_UFCS(require)(t, !(CPP2_UFCS(is_virtual)(mf)), 
-                       "a struct may not have a virtual function");
-            CPP2_UFCS(require)(t, !(CPP2_UFCS(has_name)(cpp2::move(mf), "operator=")), 
-                       "a struct may not have a user-defined operator=");
+            CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (require), CPP2_FORWARD(cpp2_ufcs_a0), "a struct may not have a virtual function")(t, !(CPP2_UFCS(is_virtual)(mf))
+                       );
+            CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (require), CPP2_FORWARD(cpp2_ufcs_a0), "a struct may not have a user-defined operator=")(t, !(CPP2_UFCS_ARGS((), (has_name), "operator=")(cpp2::move(mf)))
+                       );
         }
         else {if (CPP2_UFCS(is_object)(m)) {
             auto mo {CPP2_UFCS(as_object)(m)}; 
@@ -5646,7 +5642,7 @@ auto cpp2_struct(meta::type_declaration& t) -> void
 
         //  And if all members had initializers, we need a default constructor
         if (!(cpp2::move(found_member_without_initializer))) {
-            CPP2_UFCS(add_member)(t, "    operator=: (implicit out this) = { }");
+            CPP2_UFCS_ARGS((), (add_member), "    operator=: (implicit out this) = { }")(t);
         }
     }
 }
@@ -5705,14 +5701,14 @@ std::string value{"-1"};
           auto const& m : CPP2_UFCS(get_members)(t) ) 
     if (  CPP2_UFCS(is_member_object)(m)) 
     {
-        CPP2_UFCS(require)(m, CPP2_UFCS(is_public)(m) || CPP2_UFCS(is_default_access)(m), 
-                    "an enumerator cannot be protected or private");
+        CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (require), CPP2_FORWARD(cpp2_ufcs_a0), "an enumerator cannot be protected or private")(m, CPP2_UFCS(is_public)(m) || CPP2_UFCS(is_default_access)(m)
+                    );
 
         auto mo {CPP2_UFCS(as_object)(m)}; 
         if (!(CPP2_UFCS(has_wildcard_type)(mo))) {
-            CPP2_UFCS(error)(mo, 
-                "an explicit underlying type should be specified as a compile-time argument "
-                "to the metafunction - try 'enum<u16>' or 'flag_enum<u64>'"
+            CPP2_UFCS_ARGS((), (error), "an explicit underlying type should be specified as a compile-time argument ""to the metafunction - try 'enum<u16>' or 'flag_enum<u64>'")(mo
+
+#line 2017 "reflect.h2"
             );
         }
 
@@ -5720,12 +5716,12 @@ std::string value{"-1"};
 
         auto is_default_or_numeric {is_empty_or_a_decimal_number(init)}; 
         found_non_numeric |= !(CPP2_UFCS(empty)(init)) && !(is_default_or_numeric);
-        CPP2_UFCS(require)(m, !(cpp2::move(is_default_or_numeric)) || !(found_non_numeric) || CPP2_UFCS(has_name)(mo, "none"), 
+        CPP2_UFCS(require)(m, !(cpp2::move(is_default_or_numeric)) || !(found_non_numeric) || CPP2_UFCS_ARGS((), (has_name), "none")(mo), 
             "" + cpp2::to_string(CPP2_UFCS(name)(mo)) + ": enumerators with non-numeric values must come after all default and numeric values");
 
         nextval(value, cpp2::move(init));
 
-        auto v {std::strtoll(&CPP2_ASSERT_IN_BOUNDS_LITERAL(value, 0), nullptr, 10)}; // for non-numeric values we'll just get 0 which is okay for now
+        auto v {std::strtoll(&CPP2_ASSERT_IN_BOUNDS_LITERAL((value), 0), nullptr, 10)}; // for non-numeric values we'll just get 0 which is okay for now
         if (cpp2::impl::cmp_less(v,min_value)) {
             min_value = v;
         }
@@ -5744,16 +5740,16 @@ std::string value{"-1"};
 
 #line 2045 "reflect.h2"
     if ((CPP2_UFCS(empty)(enumerators))) {
-        CPP2_UFCS(error)(t, "an enumeration must contain at least one enumerator value");
+        CPP2_UFCS_ARGS((), (error), "an enumeration must contain at least one enumerator value")(t);
         return ; 
     }
 
     //  Compute the default underlying type, if it wasn't explicitly specified
     if (underlying_type.value() == "") 
     {
-        CPP2_UFCS(require)(t, !(cpp2::move(found_non_numeric)), 
-            "if you write an enumerator with a non-numeric-literal value, "
-            "you must specify the enumeration's underlying type"
+        CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (require), CPP2_FORWARD(cpp2_ufcs_a0), "if you write an enumerator with a non-numeric-literal value, ""you must specify the enumeration's underlying type")(t, !(cpp2::move(found_non_numeric))
+
+#line 2056 "reflect.h2"
         );
 
         if (!(bitwise)) {
@@ -5770,9 +5766,9 @@ std::string value{"-1"};
                 underlying_type.value() = "i64";
             }
             else {
-                CPP2_UFCS(error)(t, 
-                    "values are outside the range representable by the "
-                    "largest supported underlying signed type (i64)"
+                CPP2_UFCS_ARGS((), (error), "values are outside the range representable by the ""largest supported underlying signed type (i64)")(t
+
+#line 2075 "reflect.h2"
                 );
             }}}}
         }
@@ -5802,7 +5798,7 @@ std::string value{"-1"};
 
     //  Generate the 'none' value if appropriate, and use that or
     //  else the first enumerator as the default-constructed value
-    auto default_value {CPP2_ASSERT_IN_BOUNDS_LITERAL(enumerators, 0).name}; 
+    auto default_value {CPP2_ASSERT_IN_BOUNDS_LITERAL((enumerators), 0).name}; 
     if (bitwise) {
         default_value = "none";
         value_member_info e {"none", "", "0"}; 
@@ -5816,15 +5812,15 @@ std::string value{"-1"};
 
     //  Generate the bitwise operations
     if (bitwise) {
-        CPP2_UFCS(add_member)(t, "    operator|=: ( inout this, that )                 == _value |= that._value;");
-        CPP2_UFCS(add_member)(t, "    operator&=: ( inout this, that )                 == _value &= that._value;");
-        CPP2_UFCS(add_member)(t, "    operator^=: ( inout this, that )                 == _value ^= that._value;");
+        CPP2_UFCS_ARGS((), (add_member), "    operator|=: ( inout this, that )                 == _value |= that._value;")(t);
+        CPP2_UFCS_ARGS((), (add_member), "    operator&=: ( inout this, that )                 == _value &= that._value;")(t);
+        CPP2_UFCS_ARGS((), (add_member), "    operator^=: ( inout this, that )                 == _value ^= that._value;")(t);
         CPP2_UFCS(add_member)(t, "    operator| : (       this, that ) -> " + cpp2::to_string(CPP2_UFCS(name)(t)) + "  == _value |  that._value;");
         CPP2_UFCS(add_member)(t, "    operator& : (       this, that ) -> " + cpp2::to_string(CPP2_UFCS(name)(t)) + "  == _value &  that._value;");
         CPP2_UFCS(add_member)(t, "    operator^ : (       this, that ) -> " + cpp2::to_string(CPP2_UFCS(name)(t)) + "  == _value ^  that._value;");
-        CPP2_UFCS(add_member)(t, "    has       : (       this, that ) -> bool         == _value &  that._value;");
-        CPP2_UFCS(add_member)(t, "    set       : ( inout this, that )                 == { _value |= that._value;  }");
-        CPP2_UFCS(add_member)(t, "    clear     : ( inout this, that )                 == { _value &= that._value~; }");
+        CPP2_UFCS_ARGS((), (add_member), "    has       : (       this, that ) -> bool         == _value &  that._value;")(t);
+        CPP2_UFCS_ARGS((), (add_member), "    set       : ( inout this, that )                 == { _value |= that._value;  }")(t);
+        CPP2_UFCS_ARGS((), (add_member), "    clear     : ( inout this, that )                 == { _value &= that._value~; }")(t);
     }
 
     //  Add the enumerators
@@ -5835,8 +5831,8 @@ std::string value{"-1"};
     //  Generate the common functions
     CPP2_UFCS(add_member)(t, "    get_raw_value     : (this) -> " + cpp2::to_string(cpp2::move(underlying_type.value())) + " == _value;");
     CPP2_UFCS(add_member)(t, "    operator=         : (out this) == { _value = " + cpp2::to_string(default_value) + "._value; }");
-    CPP2_UFCS(add_member)(t, "    operator=         : (out this, that) == { }");
-    CPP2_UFCS(add_member)(t, "    operator<=>       : (this, that) -> std::strong_ordering;");
+    CPP2_UFCS_ARGS((), (add_member), "    operator=         : (out this, that) == { }")(t);
+    CPP2_UFCS_ARGS((), (add_member), "    operator<=>       : (this, that) -> std::strong_ordering;")(t);
 {
 std::string to_string_impl{"    to_string_impl: (this, prefix: std::string_view"};
 
@@ -5886,11 +5882,11 @@ std::string to_string_impl{"    to_string_impl: (this, prefix: std::string_view"
 
 #line 2182 "reflect.h2"
     if (bitwise) {
-        CPP2_UFCS(add_member)(t, "    to_string: (this) -> std::string = to_string_impl( \"\", \", \" );");
+        CPP2_UFCS_ARGS((), (add_member), "    to_string: (this) -> std::string = to_string_impl( \"\", \", \" );")(t);
         CPP2_UFCS(add_member)(t, "    to_code  : (this) -> std::string = to_string_impl( \"" + cpp2::to_string(CPP2_UFCS(name)(t)) + "::\", \" | \" );");
     }
     else {
-        CPP2_UFCS(add_member)(t, "    to_string: (this) -> std::string = to_string_impl( \"\" );");
+        CPP2_UFCS_ARGS((), (add_member), "    to_string: (this) -> std::string = to_string_impl( \"\" );")(t);
         CPP2_UFCS(add_member)(t, "    to_code  : (this) -> std::string = to_string_impl( \"" + cpp2::to_string(CPP2_UFCS(name)(t)) + "::\" );");
     }
 {
@@ -5967,7 +5963,7 @@ auto cpp2_enum(meta::type_declaration& t) -> void
             if (!(CPP2_UFCS(empty)(specified_value))) {
                 value = specified_value;
             }else {
-                auto v {std::strtoll(&CPP2_ASSERT_IN_BOUNDS_LITERAL(value, 0), nullptr, 10)}; 
+                auto v {std::strtoll(&CPP2_ASSERT_IN_BOUNDS_LITERAL((value), 0), nullptr, 10)}; 
                 value = cpp2::impl::as_<std::string>((cpp2::move(v) + 1));
             }
         }, 
@@ -5995,7 +5991,7 @@ auto flag_enum(meta::type_declaration& t) -> void
             if (!(CPP2_UFCS(empty)(specified_value))) {
                 value = specified_value;
             }else {
-                auto v {std::strtoll(&CPP2_ASSERT_IN_BOUNDS_LITERAL(value, 0), nullptr, 10)}; 
+                auto v {std::strtoll(&CPP2_ASSERT_IN_BOUNDS_LITERAL((value), 0), nullptr, 10)}; 
                 if (cpp2::impl::cmp_less(v,1)) {
                     value = "1";
                 }
@@ -6048,19 +6044,18 @@ auto value{0};
            auto const& m : CPP2_UFCS(get_members)(t) )  { do 
     if (   CPP2_UFCS(is_member_object)(m)) 
     {
-        CPP2_UFCS(require)(m, CPP2_UFCS(is_public)(m) || CPP2_UFCS(is_default_access)(m), 
-                   "a union alternative cannot be protected or private"
+        CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (require), CPP2_FORWARD(cpp2_ufcs_a0), "a union alternative cannot be protected or private")(m, CPP2_UFCS(is_public)(m) || CPP2_UFCS(is_default_access)(m)
+
                 );
 
-        CPP2_UFCS(require)(m, !(CPP2_UFCS(starts_with)(CPP2_UFCS(name)(m), "is_")) 
-                   && !(CPP2_UFCS(starts_with)(CPP2_UFCS(name)(m), "set_")), 
-                   "a union alternative's name cannot start with 'is_' or 'set_' - that could cause "
-                   "user confusion with the 'is_alternative' and 'set_alternative' generated functions"
+        CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (require), CPP2_FORWARD(cpp2_ufcs_a0), "a union alternative's name cannot start with 'is_' or 'set_' - that could cause ""user confusion with the 'is_alternative' and 'set_alternative' generated functions")(m, !(CPP2_UFCS_ARGS((), (starts_with), "is_")(CPP2_UFCS(name)(m))) && !(CPP2_UFCS_ARGS((), (starts_with), "set_")(CPP2_UFCS(name)(m)))
+
+#line 2339 "reflect.h2"
                 );
 
         auto mo {CPP2_UFCS(as_object)(m)}; 
-        CPP2_UFCS(require)(mo, CPP2_UFCS(empty)(CPP2_UFCS(initializer)(mo)), 
-                    "a union alternative cannot have an initializer"
+        CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (require), CPP2_FORWARD(cpp2_ufcs_a0), "a union alternative cannot have an initializer")(mo, CPP2_UFCS(empty)(CPP2_UFCS(initializer)(mo))
+
                 );
 
         //  Adding local variable 'e' to work around a Clang warning
@@ -6167,10 +6162,10 @@ std::string destroy{"    private _destroy: (inout this) = {\n"};
 
     //  Add the destructor
 #line 2438 "reflect.h2"
-    CPP2_UFCS(add_member)(t, "    operator=: (move this) = { _destroy(); _ = this; }");
+    CPP2_UFCS_ARGS((), (add_member), "    operator=: (move this) = { _destroy(); _ = this; }")(t);
 
     //  Add default constructor
-    CPP2_UFCS(add_member)(t, "    operator=: (out this) = { }");
+    CPP2_UFCS_ARGS((), (add_member), "    operator=: (out this) = { }")(t);
 {
 std::string value_set{""};
 
@@ -6212,9 +6207,9 @@ auto encapsulated(meta::type_declaration& t) -> void
     for ( 
          auto const& m : CPP2_UFCS(get_member_objects)(t) ) 
     {
-        CPP2_UFCS(require)(m, 
-            !(CPP2_UFCS(is_public)(m)), 
-            "an @encapsulated type must not have public data members"
+        CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (require), CPP2_FORWARD(cpp2_ufcs_a0), "an @encapsulated type must not have public data members")(m, !(CPP2_UFCS(is_public)(m))
+
+#line 2480 "reflect.h2"
         );
     }
 }
@@ -6230,12 +6225,9 @@ auto encapsulated(meta::type_declaration& t) -> void
 auto noncopyable(meta::type_declaration& t) -> void
 {
     auto smfs {CPP2_UFCS(query_declared_value_set_functions)(t)}; 
-    CPP2_UFCS(require)(t, 
-        !(smfs.out_this_in_that) 
-        && !(smfs.out_this_move_that) 
-        && !(smfs.inout_this_in_that) 
-        && !(smfs.inout_this_move_that), 
-        "a @noncopyable type must not have operator= with this and that parameters"
+    CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (require), CPP2_FORWARD(cpp2_ufcs_a0), "a @noncopyable type must not have operator= with this and that parameters")(t, !(smfs.out_this_in_that) && !(smfs.out_this_move_that) && !(smfs.inout_this_in_that) && !(smfs.inout_this_move_that)
+
+#line 2500 "reflect.h2"
     );
 }
 
@@ -6258,14 +6250,13 @@ auto singleton(meta::type_declaration& t) -> void
     for ( 
          auto const& m : CPP2_UFCS(get_member_functions)(t) ) 
     {
-        CPP2_UFCS(require)(m, 
-            !(CPP2_UFCS(is_constructor)(m)), 
-            "a @singleton type must not have a user-written constructor - "
-            "a private default constructor will be generated automatically"
+        CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (require), CPP2_FORWARD(cpp2_ufcs_a0), "a @singleton type must not have a user-written constructor - ""a private default constructor will be generated automatically")(m, !(CPP2_UFCS(is_constructor)(m))
+
+#line 2525 "reflect.h2"
         );
     }
 
-    CPP2_UFCS(add_member)(t, "    private operator=: (out this) = { }\n");
+    CPP2_UFCS_ARGS((), (add_member), "    private operator=: (out this) = { }\n")(t);
     CPP2_UFCS(add_member)(t, "    instance: () -> forward " + cpp2::to_string(CPP2_UFCS(name)(t)) + " = {\n"
                   "        static _instance: " + cpp2::to_string(CPP2_UFCS(name)(t)) + " = ();"
                   "        return _instance;\n"
@@ -6295,7 +6286,7 @@ auto noisy(cpp2::impl::in<meta::type_declaration> t) -> void
     for ( 
          auto const& m : CPP2_UFCS(get_members)(t) ) 
     if ( CPP2_UFCS(is_function)(m) 
-        && !(CPP2_UFCS(has_name)(m, "operator="))) 
+        && !(CPP2_UFCS_ARGS((), (has_name), "operator=")(m))) 
     {
         auto mf {CPP2_UFCS(as_function)(m)}; 
         if (CPP2_UFCS(has_compound_body)(mf)) {
@@ -6354,7 +6345,7 @@ auto python(meta::type_declaration& t) -> void
         if (CPP2_UFCS(is_constructor)(mf)) {
             bind += "        .def(pybind11::init<" + cpp2::to_string(cpp2::move(params).types) + ">())\n";
         }
-        else {if (!(CPP2_UFCS(has_name)(mf, "operator="))) {
+        else {if (!(CPP2_UFCS_ARGS((), (has_name), "operator=")(mf))) {
             bind += "        .def(\"" + cpp2::to_string(CPP2_UFCS(name)(mf)) + "\", &" + cpp2::to_string(CPP2_UFCS(name)(t)) + "::" + cpp2::to_string(CPP2_UFCS(name)(mf)) + " " + cpp2::to_string(cpp2::move(params).names) + ")\n";
         }}
     }
@@ -6363,13 +6354,13 @@ auto python(meta::type_declaration& t) -> void
     bind += "}\n";
 
     auto file {CPP2_UFCS(filename)(t)}; 
-    if (CPP2_UFCS(ends_with)(file, ".cpp2")) {
+    if (CPP2_UFCS_ARGS((), (ends_with), ".cpp2")(file)) {
         file = CPP2_UFCS(substr)(file, 0, CPP2_UFCS(size)(file) - 5);// drop the ".cpp2"
     }
     std::string build {"g++-10 -O3 -shared -std=c++20 -fPIC $(python3 -m pybind11 --includes) " + cpp2::to_string(file) + ".cpp -o " + cpp2::to_string(file) + "lib$(python3-config --extension-suffix)"}; 
 
-    CPP2_UFCS(add_runtime_support_include)(t, "pybind11/pybind11.h", true);
-    CPP2_UFCS(add_runtime_support_include)(t, "pybind11/stl.h", true);
+    CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (add_runtime_support_include), "pybind11/pybind11.h", CPP2_FORWARD(cpp2_ufcs_a0))(t, true);
+    CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (add_runtime_support_include), "pybind11/stl.h", CPP2_FORWARD(cpp2_ufcs_a0))(t, true);
     CPP2_UFCS(add_extra_cpp1_code)(t, cpp2::move(bind));
     CPP2_UFCS(add_extra_build_step)(t, cpp2::move(build));
 }
@@ -6399,7 +6390,7 @@ auto javascript(meta::type_declaration& t) -> void
         if (CPP2_UFCS(is_constructor)(mf)) {
             bind += "        .constructor<" + cpp2::to_string(cpp2::move(params).types) + ">()\n";
         }
-        else {if (!(CPP2_UFCS(has_name)(mf, "operator="))) {
+        else {if (!(CPP2_UFCS_ARGS((), (has_name), "operator=")(mf))) {
             bind += "        .function(\"" + cpp2::to_string(CPP2_UFCS(name)(mf)) + "\", &" + cpp2::to_string(CPP2_UFCS(name)(t)) + "::" + cpp2::to_string(CPP2_UFCS(name)(mf)) + ")\n";
         }}
     }
@@ -6408,11 +6399,11 @@ auto javascript(meta::type_declaration& t) -> void
     bind += "}\n";
 
     auto file {CPP2_UFCS(filename)(t)}; 
-    if (CPP2_UFCS(ends_with)(file, ".cpp2")) {
+    if (CPP2_UFCS_ARGS((), (ends_with), ".cpp2")(file)) {
         file = CPP2_UFCS(substr)(file, 0, CPP2_UFCS(size)(file) - 5);// drop the ".cpp2"
     }
     std::string build {"em++ -std=c++20 -O3 " + cpp2::to_string(file) + ".cpp --bind -s MODULARIZE=1 -s ENVIRONMENT='web,node' -s ALLOW_MEMORY_GROWTH=1 -s FILESYSTEM=0 -s LEGACY_VM_SUPPORT=1 -o " + cpp2::to_string(file) + ".js"}; 
-    CPP2_UFCS(add_runtime_support_include)(t, "emscripten/bind.h", true);
+    CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (add_runtime_support_include), "emscripten/bind.h", CPP2_FORWARD(cpp2_ufcs_a0))(t, true);
     CPP2_UFCS(add_extra_cpp1_code)(t, cpp2::move(bind));
     CPP2_UFCS(add_extra_build_step)(t, cpp2::move(build));
     CPP2_UFCS(disable_ref_qualifier_generation)(t);
@@ -7261,7 +7252,7 @@ auto sample_traverser(cpp2::impl::in<meta::type_declaration> t, cpp2::impl::in<c
         for ( auto const& m : CPP2_UFCS(get_members)(ns) ) {
             sample_print(CPP2_UFCS(name)(m), indent + 2);
         }
-        CPP2_UFCS(add_member)(ns, "add_1: (x) = x+1;");
+        CPP2_UFCS_ARGS((), (add_member), "add_1: (x) = x+1;")(ns);
         static_cast<void>(cpp2::move(ns));
     }
 
@@ -8296,7 +8287,7 @@ autodiff_declaration_stack_item::autodiff_declaration_stack_item(autodiff_declar
         if (!(CPP2_UFCS(empty)(decls))) {
             if (cpp2::cpp2_default.is_active() && !(CPP2_UFCS(ssize)(decls) == 1) ) { cpp2::cpp2_default.report_violation(""); }
             autodiff_activity_check ada {&(*this)}; 
-            CPP2_UFCS(pre_traverse)(ada, CPP2_ASSERT_IN_BOUNDS_LITERAL(cpp2::move(decls), 0));
+            CPP2_UFCS(pre_traverse)(ada, CPP2_ASSERT_IN_BOUNDS_LITERAL((cpp2::move(decls)), 0));
             r = cpp2::move(ada).active;
         }
 
@@ -8304,7 +8295,7 @@ autodiff_declaration_stack_item::autodiff_declaration_stack_item(autodiff_declar
 
         if (!(r)) {
             // Declaration lookup did not yield an activity: Apply some heuristics.
-            r = CPP2_UFCS(contains)(type, "double");
+            r = CPP2_UFCS_ARGS((), (contains), "double")(type);
         }
 
         return r; 
@@ -8318,7 +8309,7 @@ autodiff_declaration_stack_item::autodiff_declaration_stack_item(autodiff_declar
             auto type_decls {lookup_type_declaration(type)}; 
             if (!(CPP2_UFCS(empty)(type_decls))) {
                 // We found a cpp2 type declaration, mark it for differentiation.
-                add_for_differentiation(CPP2_ASSERT_IN_BOUNDS_LITERAL(cpp2::move(type_decls), 0));
+                add_for_differentiation(CPP2_ASSERT_IN_BOUNDS_LITERAL((cpp2::move(type_decls)), 0));
 
                 // Add the AD suffix to the type
                 type_d += fwd_suffix;
@@ -8337,7 +8328,7 @@ autodiff_declaration_stack_item::autodiff_declaration_stack_item(autodiff_declar
             auto type_decls {lookup_type_declaration(type)}; 
             if (!(CPP2_UFCS(empty)(type_decls))) {
                 // We found a cpp2 type declaration, mark it for differentiation.
-                add_for_differentiation(CPP2_ASSERT_IN_BOUNDS_LITERAL(cpp2::move(type_decls), 0));
+                add_for_differentiation(CPP2_ASSERT_IN_BOUNDS_LITERAL((cpp2::move(type_decls)), 0));
 
                 // Add the AD suffix to the type
                 type_d += rws_suffix;
@@ -8761,7 +8752,7 @@ auto cur{CPP2_UFCS(rbegin)(declaration_stack)};
         }
         else {if (CPP2_UFCS(is_literal)(primary)) {
             // TODO: Improve check
-            if (CPP2_UFCS(contains)(CPP2_UFCS(to_string)(primary), ".")) {
+            if (CPP2_UFCS_ARGS((), (contains), ".")(CPP2_UFCS(to_string)(primary))) {
                 active = true;
             }
         }
@@ -8948,10 +8939,10 @@ autodiff_expression_handler::primal_fwd_rws_name::primal_fwd_rws_name(){}
         else {if (CPP2_UFCS(is_expression_list)(term)) {
             auto exprs {term.as_expression_list().get_expressions()}; 
             if (CPP2_UFCS(ssize)(exprs) != 1) {
-                CPP2_UFCS(error)(term, "Can not handle multiple expressions. (term.to_string())");
+                CPP2_UFCS_ARGS((), (error), "Can not handle multiple expressions. (term.to_string())")(term);
                 return { "error", "", "", false }; 
             }
-            auto expr {CPP2_ASSERT_IN_BOUNDS_LITERAL(cpp2::move(exprs), 0)}; 
+            auto expr {CPP2_ASSERT_IN_BOUNDS_LITERAL((cpp2::move(exprs)), 0)}; 
             auto bin_expr {expr.as_assignment_expression()}; 
 
             if (CPP2_UFCS(terms_size)(bin_expr) != 0) {
@@ -8973,7 +8964,7 @@ autodiff_expression_handler::primal_fwd_rws_name::primal_fwd_rws_name(){}
                 autodiff_expression_handler ad {ctx}; 
                 ad.pre_traverse(cpp2::move(expr));
                 auto t {CPP2_UFCS(gen_temporary)((*cpp2::impl::assert_not_null(ctx)))}; 
-                CPP2_UFCS(gen_declaration)(ad, t, "double");// TODO: get type of expression
+                CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (gen_declaration), CPP2_FORWARD(cpp2_ufcs_a0), "double")(ad, t);// TODO: get type of expression
                 append(cpp2::move(ad));
 
                 primal_fwd_rws_name r {t, t + (*cpp2::impl::assert_not_null(ctx)).fwd_suffix, t + (*cpp2::impl::assert_not_null(ctx)).rws_suffix, true}; // TODO: Check why on return (t, t + ctx*.fwd_suffix) the primal is initialized empty. Probably because of the move(t)
@@ -9063,7 +9054,7 @@ auto i{0};
             return ; 
         }
 
-        if (CPP2_UFCS(contains)(object, ".")) {
+        if (CPP2_UFCS_ARGS((), (contains), ".")(object)) {
             CPP2_UFCS(error)(postfix, "AD: can not handle nested member function calls: " + cpp2::to_string(CPP2_UFCS(to_string)(postfix)) + "");
             return ; 
         }
@@ -9115,9 +9106,9 @@ auto i{0};
                               "    If cpp function: please add a special handling for this member function.");
                     return ; 
                 }
-                functions = CPP2_UFCS(lookup_member_function_declaration)((*cpp2::impl::assert_not_null(ctx)), CPP2_ASSERT_IN_BOUNDS_LITERAL(obj_decl_types, 0), cpp2::move(function_name));
+                functions = CPP2_UFCS(lookup_member_function_declaration)((*cpp2::impl::assert_not_null(ctx)), CPP2_ASSERT_IN_BOUNDS_LITERAL((obj_decl_types), 0), cpp2::move(function_name));
 
-                CPP2_UFCS(add_for_differentiation)((*cpp2::impl::assert_not_null(ctx)), CPP2_ASSERT_IN_BOUNDS_LITERAL(cpp2::move(obj_decl_types), 0));// TODO: Add more fine grained differentiation.
+                CPP2_UFCS(add_for_differentiation)((*cpp2::impl::assert_not_null(ctx)), CPP2_ASSERT_IN_BOUNDS_LITERAL((cpp2::move(obj_decl_types)), 0));// TODO: Add more fine grained differentiation.
             }
             else {
                 functions = CPP2_UFCS(lookup_function_declaration)((*cpp2::impl::assert_not_null(ctx)), function_name);
@@ -9128,18 +9119,18 @@ auto i{0};
                     return ; 
                 }
                 else {if (CPP2_UFCS(ssize)(functions) != 1) {
-                    CPP2_UFCS(error)(postfix, "AD: No handling for overload resultion is currently implemented.");
+                    CPP2_UFCS_ARGS((), (error), "AD: No handling for overload resultion is currently implemented.")(postfix);
                     return ; 
                 }}
 
-                CPP2_UFCS(add_for_differentiation)((*cpp2::impl::assert_not_null(ctx)), CPP2_ASSERT_IN_BOUNDS_LITERAL(functions, 0));
+                CPP2_UFCS(add_for_differentiation)((*cpp2::impl::assert_not_null(ctx)), CPP2_ASSERT_IN_BOUNDS_LITERAL((functions), 0));
             }
 
             std::string ret_name {"r"};   // Default for regular return.
-            auto returns {CPP2_UFCS(get_returns)(CPP2_ASSERT_IN_BOUNDS_LITERAL(cpp2::move(functions), 0))}; 
+            auto returns {CPP2_UFCS(get_returns)(CPP2_ASSERT_IN_BOUNDS_LITERAL((cpp2::move(functions)), 0))}; 
             if (!(CPP2_UFCS(empty)(returns))) {
                 if (CPP2_UFCS(ssize)(returns) != 1) {
-                    CPP2_UFCS(error)(postfix, "AD: Expecting single return.");
+                    CPP2_UFCS_ARGS((), (error), "AD: Expecting single return.")(postfix);
                 }
 
                 for ( auto const& cur : cpp2::move(returns) ) {
@@ -9232,52 +9223,52 @@ auto i{1};
 
 #line 5225 "reflect.h2"
     auto autodiff_expression_handler::traverse(cpp2::impl::in<meta::assignment_expression> binexpr) -> void{
-        CPP2_UFCS(error)(binexpr, "AD: Assign expressions are not yet handled.");
+        CPP2_UFCS_ARGS((), (error), "AD: Assign expressions are not yet handled.")(binexpr);
     }
 
 #line 5229 "reflect.h2"
     auto autodiff_expression_handler::traverse(cpp2::impl::in<meta::logical_or_expression> binexpr) -> void{
-        CPP2_UFCS(error)(binexpr, "AD: Logical or expressions are not yet handled.");
+        CPP2_UFCS_ARGS((), (error), "AD: Logical or expressions are not yet handled.")(binexpr);
     }
 
 #line 5233 "reflect.h2"
     auto autodiff_expression_handler::traverse(cpp2::impl::in<meta::logical_and_expression> binexpr) -> void{
-        CPP2_UFCS(error)(binexpr, "AD: Logical and expressions are not yet handled.");
+        CPP2_UFCS_ARGS((), (error), "AD: Logical and expressions are not yet handled.")(binexpr);
     }
 
 #line 5237 "reflect.h2"
     auto autodiff_expression_handler::traverse(cpp2::impl::in<meta::bit_or_expression> binexpr) -> void{
-        CPP2_UFCS(error)(binexpr, "AD: Bit or expressions are not yet handled.");
+        CPP2_UFCS_ARGS((), (error), "AD: Bit or expressions are not yet handled.")(binexpr);
     }
 
 #line 5241 "reflect.h2"
     auto autodiff_expression_handler::traverse(cpp2::impl::in<meta::bit_xor_expression> binexpr) -> void{
-        CPP2_UFCS(error)(binexpr, "AD: Bit xor expressions are not yet handled.");
+        CPP2_UFCS_ARGS((), (error), "AD: Bit xor expressions are not yet handled.")(binexpr);
     }
 
 #line 5245 "reflect.h2"
     auto autodiff_expression_handler::traverse(cpp2::impl::in<meta::bit_and_expression> binexpr) -> void{
-        CPP2_UFCS(error)(binexpr, "AD: Bit and expressions are not yet handled.");
+        CPP2_UFCS_ARGS((), (error), "AD: Bit and expressions are not yet handled.")(binexpr);
     }
 
 #line 5249 "reflect.h2"
     auto autodiff_expression_handler::traverse(cpp2::impl::in<meta::equality_expression> binexpr) -> void{
-        CPP2_UFCS(error)(binexpr, "AD: Equality or expressions are not yet handled.");
+        CPP2_UFCS_ARGS((), (error), "AD: Equality or expressions are not yet handled.")(binexpr);
     }
 
 #line 5253 "reflect.h2"
     auto autodiff_expression_handler::traverse(cpp2::impl::in<meta::relational_expression> binexpr) -> void{
-        CPP2_UFCS(error)(binexpr, "AD: Relational expressions are not yet handled.");
+        CPP2_UFCS_ARGS((), (error), "AD: Relational expressions are not yet handled.")(binexpr);
     }
 
 #line 5257 "reflect.h2"
     auto autodiff_expression_handler::traverse(cpp2::impl::in<meta::compare_expression> binexpr) -> void{
-        CPP2_UFCS(error)(binexpr, "AD: Compare or expressions are not yet handled.");
+        CPP2_UFCS_ARGS((), (error), "AD: Compare or expressions are not yet handled.")(binexpr);
     }
 
 #line 5261 "reflect.h2"
     auto autodiff_expression_handler::traverse(cpp2::impl::in<meta::shift_expression> binexpr) -> void{
-        CPP2_UFCS(error)(binexpr, "AD: Shift or expressions are not yet handled.");
+        CPP2_UFCS_ARGS((), (error), "AD: Shift or expressions are not yet handled.")(binexpr);
     }
 
 #line 5265 "reflect.h2"
@@ -9327,13 +9318,13 @@ auto i{1};
     auto autodiff_expression_handler::traverse(cpp2::impl::in<meta::multiplicative_expression> binexpr) -> void{
         auto terms {CPP2_UFCS(get_terms)(binexpr)}; 
 
-        auto var_a {handle_expression_term(CPP2_UFCS(get_term)(CPP2_ASSERT_IN_BOUNDS_LITERAL(terms, 0)))}; 
+        auto var_a {handle_expression_term(CPP2_UFCS(get_term)(CPP2_ASSERT_IN_BOUNDS_LITERAL((terms), 0)))}; 
 
         int i {1}; 
         for( ; cpp2::impl::cmp_less(i,CPP2_UFCS(ssize)(terms)); i += 1 ) {
-            auto var_b {handle_expression_term(CPP2_UFCS(get_term)(CPP2_ASSERT_IN_BOUNDS(terms, i)))}; 
+            auto var_b {handle_expression_term(CPP2_UFCS(get_term)(CPP2_ASSERT_IN_BOUNDS((terms), i)))}; 
 
-            auto op {CPP2_UFCS(to_string)(CPP2_UFCS(get_op)(CPP2_ASSERT_IN_BOUNDS(terms, i)))}; 
+            auto op {CPP2_UFCS(to_string)(CPP2_UFCS(get_op)(CPP2_ASSERT_IN_BOUNDS((terms), i)))}; 
 
             std::string fwd {""}; 
             std::string rws {""}; 
@@ -9413,7 +9404,7 @@ auto i{1};
 
 #line 5394 "reflect.h2"
     auto autodiff_expression_handler::traverse(cpp2::impl::in<meta::is_as_expression> isas) -> void{
-        CPP2_UFCS(error)(isas, "AD: Is as expressions are not yet handled.");
+        CPP2_UFCS_ARGS((), (error), "AD: Is as expressions are not yet handled.")(isas);
     }
 
 #line 5398 "reflect.h2"
@@ -9429,8 +9420,8 @@ auto i{1};
         CPP2_UFCS(pre_traverse)(ad, CPP2_UFCS(get_postfix_expression)(prefix));
         append(ad);
 
-        primal_expr = CPP2_ASSERT_IN_BOUNDS_LITERAL(ops, 0) + ad.primal_expr;
-        fwd_expr    = CPP2_ASSERT_IN_BOUNDS_LITERAL(cpp2::move(ops), 0) + cpp2::move(ad).fwd_expr;
+        primal_expr = CPP2_ASSERT_IN_BOUNDS_LITERAL((ops), 0) + ad.primal_expr;
+        fwd_expr    = CPP2_ASSERT_IN_BOUNDS_LITERAL((cpp2::move(ops)), 0) + cpp2::move(ad).fwd_expr;
     }
 
 #line 5414 "reflect.h2"
@@ -9618,7 +9609,7 @@ auto i{0};
 
                 if (type == "_" && cpp2::move(ad).fwd_expr == "()") {
                     // Special handling for auto initialization from a literal.
-                    fwd_init = " = " + CPP2_UFCS(get_fwd_ad_type)((*cpp2::impl::assert_not_null(ctx)), "double") + "()";
+                    fwd_init = " = " + CPP2_UFCS_ARGS((), (get_fwd_ad_type), "double")((*cpp2::impl::assert_not_null(ctx))) + "()";
                 }
             }
 
@@ -9662,9 +9653,9 @@ auto i{0};
         autodiff_stmt_handler ad_push_pop {ctx, mf}; 
         ad_push_pop.overwrite_push_pop = true;
 
-        CPP2_UFCS(add_forward)(diff, "{\n");
-        CPP2_UFCS(add_reverse_primal)(diff, "{\n");
-        CPP2_UFCS(add_reverse_backprop)(diff, "}\n");
+        CPP2_UFCS_ARGS((), (add_forward), "{\n")(diff);
+        CPP2_UFCS_ARGS((), (add_reverse_primal), "{\n")(diff);
+        CPP2_UFCS_ARGS((), (add_reverse_backprop), "}\n")(diff);
 
         for ( auto const& cur : CPP2_UFCS(get_statements)(stmt) ) {
             CPP2_UFCS(pre_traverse)(ad, cur);
@@ -9686,9 +9677,9 @@ auto i{0};
             CPP2_UFCS(add_reverse_backprop)(diff, "" + cpp2::to_string(cur) + " = cpp2::ad_stack::pop<" + cpp2::to_string(cpp2::move(r).decl) + ">();");
         }
 
-        CPP2_UFCS(add_forward)(diff, "}\n");
-        CPP2_UFCS(add_reverse_primal)(diff, "}\n");
-        CPP2_UFCS(add_reverse_backprop)(diff, "{\n");
+        CPP2_UFCS_ARGS((), (add_forward), "}\n")(diff);
+        CPP2_UFCS_ARGS((), (add_reverse_primal), "}\n")(diff);
+        CPP2_UFCS_ARGS((), (add_reverse_backprop), "{\n")(diff);
     }
 
 #line 5675 "reflect.h2"
@@ -9700,7 +9691,7 @@ auto i{0};
             //     - Return was converted to a two parameter return with the name r.
             autodiff_expression_handler ad {ctx}; 
             ad.pre_traverse(CPP2_UFCS(get_expression)(stmt));
-            CPP2_UFCS(gen_assignment)(ad, "r");
+            CPP2_UFCS_ARGS((), (gen_assignment), "r")(ad);
             append(cpp2::move(ad));
         }
         else {
@@ -9710,10 +9701,10 @@ auto i{0};
 
 #line 5691 "reflect.h2"
     [[nodiscard]] auto autodiff_stmt_handler::reverse_next(cpp2::impl::in<std::string> expr) const& -> std::string{
-        if (CPP2_UFCS(contains)(expr, "+=")) {
+        if (CPP2_UFCS_ARGS((), (contains), "+=")(expr)) {
             return string_util::replace_all(expr, "+=", "-="); 
         }
-        else {if (CPP2_UFCS(contains)(expr, "-=")) {
+        else {if (CPP2_UFCS_ARGS((), (contains), "-=")(expr)) {
             return string_util::replace_all(expr, "-=", "+="); 
         }}
 
@@ -9728,7 +9719,7 @@ auto i{0};
         auto diff_params {handle_stmt_parameters(last_params)}; 
 
         if (CPP2_UFCS(is_reverse)((*cpp2::impl::assert_not_null(ctx))) && (CPP2_UFCS(is_while)(stmt) || CPP2_UFCS(is_do)(stmt))) {
-            CPP2_UFCS(error)(stmt, "AD: Alpha limitiation now reverse mode for while or do while.");
+            CPP2_UFCS_ARGS((), (error), "AD: Alpha limitiation now reverse mode for while or do while.")(stmt);
         }
 
         if (CPP2_UFCS(is_while)(stmt)) {
@@ -9772,8 +9763,8 @@ auto i{0};
 
             std::string rws {"("}; 
             std::string rws_restore {""}; 
-            CPP2_UFCS(add_forward)(diff, "(");// Open statment parameter scope. If the loop has parameters, they are alrady handled and the brace is left open.
-            CPP2_UFCS(add_reverse_primal)(diff, "{\n");
+            CPP2_UFCS_ARGS((), (add_forward), "(")(diff);// Open statment parameter scope. If the loop has parameters, they are alrady handled and the brace is left open.
+            CPP2_UFCS_ARGS((), (add_reverse_primal), "{\n")(diff);
             if (!(CPP2_UFCS(empty)(last_params))) {
                 for ( auto const& cur : last_params ) {
                     if (CPP2_UFCS(has_initializer)(CPP2_UFCS(get_declaration)(cur))) {
@@ -9807,16 +9798,16 @@ auto i{0};
             CPP2_UFCS(add_forward)(diff, "(" + cpp2::to_string(cpp2::move(param_style)) + " " + cpp2::to_string(CPP2_UFCS(name)(param_decl)) + cpp2::to_string((*cpp2::impl::assert_not_null(ctx)).fwd_suffix) + ": " + cpp2::to_string(CPP2_UFCS(type)(param_decl)) + " = " + cpp2::to_string(CPP2_UFCS(name)(param_decl)) + cpp2::to_string((*cpp2::impl::assert_not_null(ctx)).fwd_suffix) + "_iter*)");
 
             CPP2_UFCS(add_variable_declaration)((*cpp2::impl::assert_not_null(ctx)), "" + cpp2::to_string(CPP2_UFCS(name)(param_decl)) + "", "" + cpp2::to_string(CPP2_UFCS(type)(param_decl)) + "", true);// TODO: Handle loop/compound context variable declarations.
-            CPP2_UFCS(add_reverse_backprop)(diff, "}\n");
+            CPP2_UFCS_ARGS((), (add_reverse_backprop), "}\n")(diff);
 
             pre_traverse(CPP2_UFCS(get_for_body)(stmt));
-            CPP2_UFCS(add_forward)(diff, "}\n");
+            CPP2_UFCS_ARGS((), (add_forward), "}\n")(diff);
 
             if (CPP2_UFCS(has_next)(stmt)) {
                 CPP2_UFCS(add_reverse_primal)(diff, "" + cpp2::to_string(reverse_next(CPP2_UFCS(to_string)(CPP2_UFCS(get_next_expression)(stmt)))) + ";\n");
             }
             CPP2_UFCS(add_reverse_primal)(diff, cpp2::move(rws_restore));
-            CPP2_UFCS(add_reverse_primal)(diff, "}\n");
+            CPP2_UFCS_ARGS((), (add_reverse_primal), "}\n")(diff);
             CPP2_UFCS(add_reverse_backprop)(diff, cpp2::move(rws));
         }}
     }
@@ -9843,7 +9834,7 @@ auto i{0};
         autodiff_activity_check ada {ctx}; 
         CPP2_UFCS(pre_traverse)(ada, CPP2_UFCS(get_lhs_postfix_expression)(binexpr));
         if ("_" == CPP2_UFCS(to_string)(CPP2_UFCS(get_lhs_postfix_expression)(binexpr))) {
-            CPP2_UFCS(pre_traverse)(ada, CPP2_UFCS(get_term)(CPP2_ASSERT_IN_BOUNDS_LITERAL(CPP2_UFCS(get_terms)(binexpr), 1)));
+            CPP2_UFCS(pre_traverse)(ada, CPP2_UFCS(get_term)(CPP2_ASSERT_IN_BOUNDS_LITERAL((CPP2_UFCS(get_terms)(binexpr)), 1)));
         }
 
         if (cpp2::move(ada).active) {
@@ -9854,7 +9845,7 @@ auto i{0};
             auto assignment_terms {CPP2_UFCS(get_terms)(binexpr)}; 
 
             autodiff_expression_handler h {ctx}; 
-            CPP2_UFCS(pre_traverse)(h, CPP2_UFCS(get_term)(CPP2_ASSERT_IN_BOUNDS_LITERAL(cpp2::move(assignment_terms), 1)));
+            CPP2_UFCS(pre_traverse)(h, CPP2_UFCS(get_term)(CPP2_ASSERT_IN_BOUNDS_LITERAL((cpp2::move(assignment_terms)), 1)));
 
             auto is_overwrite {CPP2_UFCS(contains)(h.primal_expr, h_lhs.primal_expr)}; 
             if (overwrite_push_pop && is_overwrite) {
@@ -9892,68 +9883,68 @@ auto i{0};
 
 #line 5870 "reflect.h2"
     auto autodiff_stmt_handler::traverse(cpp2::impl::in<meta::logical_or_expression> binexpr) -> void{
-        CPP2_UFCS(error)(binexpr, "AD: Logical or expressions are not yet handled as standalone statements.");
+        CPP2_UFCS_ARGS((), (error), "AD: Logical or expressions are not yet handled as standalone statements.")(binexpr);
     }
 
 #line 5874 "reflect.h2"
     auto autodiff_stmt_handler::traverse(cpp2::impl::in<meta::logical_and_expression> binexpr) -> void{
-        CPP2_UFCS(error)(binexpr, "AD: Logical and expressions are not yet handled as standalone statements.");
+        CPP2_UFCS_ARGS((), (error), "AD: Logical and expressions are not yet handled as standalone statements.")(binexpr);
     }
 
 #line 5878 "reflect.h2"
     auto autodiff_stmt_handler::traverse(cpp2::impl::in<meta::bit_or_expression> binexpr) -> void{
-        CPP2_UFCS(error)(binexpr, "AD: Bit or expressions are not yet handled as standalone statements.");
+        CPP2_UFCS_ARGS((), (error), "AD: Bit or expressions are not yet handled as standalone statements.")(binexpr);
     }
 
 #line 5882 "reflect.h2"
     auto autodiff_stmt_handler::traverse(cpp2::impl::in<meta::bit_xor_expression> binexpr) -> void{
-        CPP2_UFCS(error)(binexpr, "AD: Bit xor expressions are not yet handled as standalone statements.");
+        CPP2_UFCS_ARGS((), (error), "AD: Bit xor expressions are not yet handled as standalone statements.")(binexpr);
     }
 
 #line 5886 "reflect.h2"
     auto autodiff_stmt_handler::traverse(cpp2::impl::in<meta::bit_and_expression> binexpr) -> void{
-        CPP2_UFCS(error)(binexpr, "AD: Bit and expressions are not yet handled as standalone statements.");
+        CPP2_UFCS_ARGS((), (error), "AD: Bit and expressions are not yet handled as standalone statements.")(binexpr);
     }
 
 #line 5890 "reflect.h2"
     auto autodiff_stmt_handler::traverse(cpp2::impl::in<meta::equality_expression> binexpr) -> void{
-        CPP2_UFCS(error)(binexpr, "AD: Equality or expressions are not yet handled as standalone statements.");
+        CPP2_UFCS_ARGS((), (error), "AD: Equality or expressions are not yet handled as standalone statements.")(binexpr);
     }
 
 #line 5894 "reflect.h2"
     auto autodiff_stmt_handler::traverse(cpp2::impl::in<meta::relational_expression> binexpr) -> void{
-        CPP2_UFCS(error)(binexpr, "AD: Relational expressions are not yet handled as standalone statements.");
+        CPP2_UFCS_ARGS((), (error), "AD: Relational expressions are not yet handled as standalone statements.")(binexpr);
     }
 
 #line 5898 "reflect.h2"
     auto autodiff_stmt_handler::traverse(cpp2::impl::in<meta::compare_expression> binexpr) -> void{
-        CPP2_UFCS(error)(binexpr, "AD: Compare or expressions are not yet handled as standalone statements.");
+        CPP2_UFCS_ARGS((), (error), "AD: Compare or expressions are not yet handled as standalone statements.")(binexpr);
     }
 
 #line 5902 "reflect.h2"
     auto autodiff_stmt_handler::traverse(cpp2::impl::in<meta::shift_expression> binexpr) -> void{
-        CPP2_UFCS(error)(binexpr, "AD: Shift or expressions are not yet handled as standalone statements.");
+        CPP2_UFCS_ARGS((), (error), "AD: Shift or expressions are not yet handled as standalone statements.")(binexpr);
     }
 
 #line 5906 "reflect.h2"
     auto autodiff_stmt_handler::traverse(cpp2::impl::in<meta::additive_expression> binexpr) -> void{
-        CPP2_UFCS(error)(binexpr, "AD: Additive expressions are not yet handled as standalone statements.");
+        CPP2_UFCS_ARGS((), (error), "AD: Additive expressions are not yet handled as standalone statements.")(binexpr);
     }
 
 #line 5910 "reflect.h2"
     auto autodiff_stmt_handler::traverse(cpp2::impl::in<meta::multiplicative_expression> binexpr) -> void{
-        CPP2_UFCS(error)(binexpr, "AD: Multiplicative expressions are not yet handled as standalone statements.");
+        CPP2_UFCS_ARGS((), (error), "AD: Multiplicative expressions are not yet handled as standalone statements.")(binexpr);
     }
 
 #line 5914 "reflect.h2"
     auto autodiff_stmt_handler::traverse(cpp2::impl::in<meta::is_as_expression> isas) -> void{
-        CPP2_UFCS(error)(isas, "AD: Is as expressions are not yet handled as standalone statements.");
+        CPP2_UFCS_ARGS((), (error), "AD: Is as expressions are not yet handled as standalone statements.")(isas);
     }
 
 #line 5918 "reflect.h2"
     auto autodiff_stmt_handler::traverse(cpp2::impl::in<meta::prefix_expression> prefix) -> void
     {
-        CPP2_UFCS(error)(prefix, "AD: Prefix expressions are not yet handled as standalone statements.");
+        CPP2_UFCS_ARGS((), (error), "AD: Prefix expressions are not yet handled as standalone statements.")(prefix);
     }
 
 #line 5923 "reflect.h2"
@@ -9996,7 +9987,7 @@ auto i{0};
 #line 5955 "reflect.h2"
     auto autodiff_stmt_handler::traverse(cpp2::impl::in<meta::primary_expression> primary) -> void
     {
-        CPP2_UFCS(error)(primary, "AD: Primary expressions are not yet handled as standalone statements.");
+        CPP2_UFCS_ARGS((), (error), "AD: Primary expressions are not yet handled as standalone statements.")(primary);
     }
 
 #line 5972 "reflect.h2"
@@ -10091,8 +10082,8 @@ auto i{0};
             }
         }
 
-        CPP2_UFCS(add_forward)(diff, ") -> (");
-        CPP2_UFCS(add_reverse_primal)(diff, ") -> (");
+        CPP2_UFCS_ARGS((), (add_forward), ") -> (")(diff);
+        CPP2_UFCS_ARGS((), (add_reverse_primal), ") -> (")(diff);
 
         //  c) Returns
 
@@ -10101,7 +10092,7 @@ auto i{0};
             if (CPP2_UFCS(has_deduced_return_type)(f)) {
                 // TODO: Take care of initialization order error.
                 CPP2_UFCS(add_forward)(diff, "r, r" + cpp2::to_string((*cpp2::impl::assert_not_null(ctx)).fwd_suffix) + ", ");
-                CPP2_UFCS(add_reverse_primal)(diff, "r, ");
+                CPP2_UFCS_ARGS((), (add_reverse_primal), "r, ")(diff);
                 if (CPP2_UFCS(is_taylor)((*cpp2::impl::assert_not_null(ctx)))) {
                     CPP2_UFCS(add_reverse_primal)(diff, "r" + cpp2::to_string((*cpp2::impl::assert_not_null(ctx)).fwd_suffix) + ",");
                 }
@@ -10133,13 +10124,13 @@ auto i{0};
             }
         }
 
-        CPP2_UFCS(add_forward)(diff, ") = {");
-        CPP2_UFCS(add_reverse_primal)(diff, ") = {");
+        CPP2_UFCS_ARGS((), (add_forward), ") = {")(diff);
+        CPP2_UFCS_ARGS((), (add_reverse_primal), ") = {")(diff);
 
         //  Generate the body
 
         if (!(CPP2_UFCS(has_compound_body)(f))) {
-            CPP2_UFCS(error)(f, "temporary alpha limitation: a differentiable function must have a {}-enclosed body");
+            CPP2_UFCS_ARGS((), (error), "temporary alpha limitation: a differentiable function must have a {}-enclosed body")(f);
             return ; 
         }
 
@@ -10155,8 +10146,8 @@ auto i{0};
         CPP2_UFCS(add_reverse_primal)(diff, ad_impl.diff.rws_primal);
         CPP2_UFCS(add_reverse_primal)(diff, cpp2::move(ad_impl).diff.rws_backprop);
 
-        CPP2_UFCS(add_forward)(diff, "}");
-        CPP2_UFCS(add_reverse_primal)(diff, "}");
+        CPP2_UFCS_ARGS((), (add_forward), "}")(diff);
+        CPP2_UFCS_ARGS((), (add_reverse_primal), "}")(diff);
 
         CPP2_UFCS(leave_function)((*cpp2::impl::assert_not_null(ctx)));
 
@@ -10249,7 +10240,7 @@ auto autodiff(meta::type_declaration& t) -> void
     int order {1}; 
     bool reverse {false}; 
     for ( auto const& arg_str : cpp2::move(args) ) {
-        if (CPP2_UFCS(starts_with)(arg_str, "\"") && CPP2_UFCS(ends_with)(arg_str, "\"")) {
+        if (CPP2_UFCS_ARGS((), (starts_with), "\"")(arg_str) && CPP2_UFCS_ARGS((), (ends_with), "\"")(arg_str)) {
             auto arg {CPP2_UFCS(substr)(arg_str, 1, CPP2_UFCS(ssize)(arg_str) - 2)}; 
 
             if (CPP2_UFCS(starts_with)(arg, suffix_token)) {
@@ -10314,10 +10305,10 @@ auto autodiff(meta::type_declaration& t) -> void
     }}
 
     if (1 != cpp2::move(order)) {
-        CPP2_UFCS(add_runtime_support_include)(t, "cpp2taylor.h");
+        CPP2_UFCS_ARGS((), (add_runtime_support_include), "cpp2taylor.h")(t);
     }
     if (cpp2::move(reverse)) {
-        CPP2_UFCS(add_runtime_support_include)(t, "cpp2ad_stack.h");
+        CPP2_UFCS_ARGS((), (add_runtime_support_include), "cpp2ad_stack.h")(t);
     }
 
     CPP2_UFCS(finish)(ad_ctx);
@@ -10571,7 +10562,7 @@ std::string str {s}; return from_string(cpp2::string_util::replace_all(cpp2::mov
 
         int i {0}; 
         for( ; cpp2::impl::cmp_less(i,CPP2_UFCS(ssize)(tokens)); (i += 1) ) {
-            CPP2_ASSERT_IN_BOUNDS(reverse_vec, s - 1 - i) = CPP2_UFCS(reverse)((*cpp2::impl::assert_not_null(CPP2_ASSERT_IN_BOUNDS(tokens, i))));
+            CPP2_ASSERT_IN_BOUNDS((reverse_vec), s - 1 - i) = CPP2_UFCS(reverse)((*cpp2::impl::assert_not_null(CPP2_ASSERT_IN_BOUNDS((tokens), i))));
         }
         return CPP2_UFCS_TEMPLATE(cpp2_new<regex_token_list>)(cpp2::shared, cpp2::move(reverse_vec)); 
     }
@@ -10774,7 +10765,7 @@ parse_context_branch_reset_state::parse_context_branch_reset_state(){}
     auto parse_context::set_named_group(cpp2::impl::in<std::string> name, cpp2::impl::in<int> id) & -> void
     {
         if (!(named_groups.contains(name))) {// Redefinition of group name is not an error. The left most one is retained.
-            CPP2_ASSERT_IN_BOUNDS(named_groups, name) = id;
+            CPP2_ASSERT_IN_BOUNDS((named_groups), name) = id;
         }
     }
 
@@ -10791,7 +10782,7 @@ parse_context_branch_reset_state::parse_context_branch_reset_state(){}
     }
 
 #line 6704 "reflect.h2"
-    [[nodiscard]] auto parse_context::current() const& -> char{return CPP2_ASSERT_IN_BOUNDS(regex, pos); }
+    [[nodiscard]] auto parse_context::current() const& -> char{return CPP2_ASSERT_IN_BOUNDS((regex), pos); }
 
 #line 6707 "reflect.h2"
     [[nodiscard]] auto parse_context::get_next_position(cpp2::impl::in<bool> in_class, cpp2::impl::in<bool> no_skip) const& -> size_t
@@ -10808,7 +10799,7 @@ parse_context_branch_reset_state::parse_context_branch_reset_state(){}
         auto cur {pos + 1}; 
         if (cpp2::move(perl_syntax)) {
             for( ; cpp2::impl::cmp_less(cur,regex.size()); (cur += 1) ) {
-                auto n {CPP2_ASSERT_IN_BOUNDS(regex, cur)}; 
+                auto n {CPP2_ASSERT_IN_BOUNDS((regex), cur)}; 
 
                 if (space_class<char>::includes(n)) {
                     continue;
@@ -10913,7 +10904,7 @@ parse_context_branch_reset_state::parse_context_branch_reset_state(){}
     {
         auto start {pos}; 
         auto start_search {pos}; 
-        if (CPP2_ASSERT_IN_BOUNDS(regex, start_search) == '-') {
+        if (CPP2_ASSERT_IN_BOUNDS((regex), start_search) == '-') {
             start_search += 1;
         }
         auto end {regex.find_first_not_of("1234567890", cpp2::move(start_search))}; 
@@ -10934,7 +10925,7 @@ parse_context_branch_reset_state::parse_context_branch_reset_state(){}
     [[nodiscard]] auto parse_context::peek_impl(cpp2::impl::in<bool> in_class) const& -> char{
         auto next_pos {get_next_position(in_class, false)}; 
         if (cpp2::impl::cmp_less(next_pos,regex.size())) {
-            return CPP2_ASSERT_IN_BOUNDS(regex, cpp2::move(next_pos)); 
+            return CPP2_ASSERT_IN_BOUNDS((regex), cpp2::move(next_pos)); 
         }
         else {
             return '\0'; 
@@ -11238,7 +11229,7 @@ generation_function_context::generation_function_context(){}
 
 #line 7146 "reflect.h2"
     [[nodiscard]] auto generation_context::get_base() & -> generation_function_context*{
-        return &CPP2_ASSERT_IN_BOUNDS_LITERAL(gen_stack, 0); 
+        return &CPP2_ASSERT_IN_BOUNDS_LITERAL((gen_stack), 0); 
     }
 
 #line 7150 "reflect.h2"
@@ -11349,7 +11340,7 @@ generation_function_context::generation_function_context(){}
 
         int i {0}; 
         for( ; cpp2::impl::cmp_less(i,s); (i += 1) ) {
-            CPP2_ASSERT_IN_BOUNDS(reverse_vec, i) = CPP2_UFCS(reverse)((*cpp2::impl::assert_not_null(CPP2_ASSERT_IN_BOUNDS(alternatives, i))));// We only reverse the alternatives, not the order in which they are checked.
+            CPP2_ASSERT_IN_BOUNDS((reverse_vec), i) = CPP2_UFCS(reverse)((*cpp2::impl::assert_not_null(CPP2_ASSERT_IN_BOUNDS((alternatives), i))));// We only reverse the alternatives, not the order in which they are checked.
         }
         return CPP2_UFCS_TEMPLATE(cpp2_new<alternative_token_gen>)(cpp2::shared, cpp2::move(reverse_vec)); 
     }
@@ -11434,8 +11425,8 @@ size_t i{0};
 
 #line 7346 "reflect.h2"
             for( ; cpp2::impl::cmp_less(i,token.size()); i += 1 ) {
-                CPP2_ASSERT_IN_BOUNDS(lower, i) = string_util::safe_tolower(CPP2_ASSERT_IN_BOUNDS(token, i));
-                CPP2_ASSERT_IN_BOUNDS(upper, i) = string_util::safe_toupper(CPP2_ASSERT_IN_BOUNDS(token, i));
+                CPP2_ASSERT_IN_BOUNDS((lower), i) = string_util::safe_tolower(CPP2_ASSERT_IN_BOUNDS((token), i));
+                CPP2_ASSERT_IN_BOUNDS((upper), i) = string_util::safe_toupper(CPP2_ASSERT_IN_BOUNDS((token), i));
             }
 }
 
@@ -11645,7 +11636,7 @@ size_t i{0};
                 cur = create_matcher("" + cpp2::to_string(cpp2::move(name)) + "_class", "");
             }
             else {if (1 != cur.size()) {
-                cur = create_matcher("range_class_entry", "'" + cpp2::to_string(CPP2_ASSERT_IN_BOUNDS_LITERAL(cur, 0)) + "', '" + cpp2::to_string(CPP2_ASSERT_IN_BOUNDS_LITERAL(cur, 2)) + "'");
+                cur = create_matcher("range_class_entry", "'" + cpp2::to_string(CPP2_ASSERT_IN_BOUNDS_LITERAL((cur), 0)) + "', '" + cpp2::to_string(CPP2_ASSERT_IN_BOUNDS_LITERAL((cur), 2)) + "'");
             }
             else {
                 cur = create_matcher("single_class_entry", "'" + cpp2::to_string(cur) + "'");
@@ -11734,7 +11725,7 @@ size_t i{0};
     if (!((ctx.current() == '\\' && ctx.peek() == 'K'))) {return nullptr; }
 
     static_cast<void>(ctx.next());// Skip escape.
-    return CPP2_UFCS_TEMPLATE(cpp2_new<regex_token_code>)(cpp2::shared, "\\K", "ctx..set_group_start(0, r.pos);"); 
+    return CPP2_UFCS_TEMPLATE_ARGS((), (cpp2_new<regex_token_code>), "\\K", "ctx..set_group_start(0, r.pos);")(cpp2::shared); 
 }
 
 #line 7664 "reflect.h2"
@@ -11970,7 +11961,7 @@ size_t i{0};
                 ctx.branch_reset_restore_state(cpp2::move(old_branch_state));
                 auto inner_ {ctx.end_group(cpp2::move(old_parser_state))}; 
 
-                token_vec list {CPP2_UFCS_TEMPLATE(cpp2_new<regex_token_empty>)(cpp2::shared, "(?|"), cpp2::move(inner_), CPP2_UFCS_TEMPLATE(cpp2_new<regex_token_empty>)(cpp2::shared, ")")}; 
+                token_vec list {CPP2_UFCS_TEMPLATE_ARGS((), (cpp2_new<regex_token_empty>), "(?|")(cpp2::shared), cpp2::move(inner_), CPP2_UFCS_TEMPLATE_ARGS((), (cpp2_new<regex_token_empty>), ")")(cpp2::shared)}; 
                 return CPP2_UFCS_TEMPLATE(cpp2_new<regex_token_list>)(cpp2::shared, cpp2::move(list)); 
             }
             else {if (ctx.current() == '=' || ctx.current() == '!') 
@@ -12172,7 +12163,7 @@ size_t i{0};
 {
     if (ctx.current() == '$' || (ctx.current() == '\\' && ctx.peek() == '$')) {
         if ((ctx.current() == '\\')) {static_cast<void>(ctx.next()); }// Skip escape
-        return CPP2_UFCS_TEMPLATE(cpp2_new<regex_token_check>)(cpp2::shared, "$", "line_end_token_matcher<char, " + cpp2::to_string(ctx.get_modifiers().has(expression_flags::multiple_lines)) + ", true>"); 
+        return CPP2_UFCS_TEMPLATE_ARGS((, auto&& cpp2_ufcs_a0), (cpp2_new<regex_token_check>), "$", CPP2_FORWARD(cpp2_ufcs_a0))(cpp2::shared, "line_end_token_matcher<char, " + cpp2::to_string(ctx.get_modifiers().has(expression_flags::multiple_lines)) + ", true>"); 
     }
     else {if (ctx.current() == '\\' && (ctx.peek() == 'z' || ctx.peek() == 'Z')) {
         static_cast<void>(ctx.next());// Skip escape
@@ -12192,10 +12183,10 @@ size_t i{0};
 
     if (ctx.current() == '\\') {
         static_cast<void>(ctx.next());
-        return CPP2_UFCS_TEMPLATE(cpp2_new<regex_token_check>)(cpp2::shared, "\\A", "line_start_token_matcher<char, false>"); 
+        return CPP2_UFCS_TEMPLATE_ARGS((), (cpp2_new<regex_token_check>), "\\A", "line_start_token_matcher<char, false>")(cpp2::shared); 
     }
     else {
-        return CPP2_UFCS_TEMPLATE(cpp2_new<regex_token_check>)(cpp2::shared, "^", "line_start_token_matcher<char, " + cpp2::to_string(ctx.get_modifiers().has(expression_flags::multiple_lines)) + ">"); 
+        return CPP2_UFCS_TEMPLATE_ARGS((, auto&& cpp2_ufcs_a0), (cpp2_new<regex_token_check>), "^", CPP2_FORWARD(cpp2_ufcs_a0))(cpp2::shared, "line_start_token_matcher<char, " + cpp2::to_string(ctx.get_modifiers().has(expression_flags::multiple_lines)) + ">"); 
     }
 }
 
@@ -12485,7 +12476,7 @@ size_t i{0};
         if (0 != ctx.get_pos()) {return ctx.error("\\G is only supported at the first position in the regex."); }
         static_cast<void>(ctx.next());
         ctx.is_start_match = true;
-        return CPP2_UFCS_TEMPLATE(cpp2_new<regex_token_empty>)(cpp2::shared, "\\G"); 
+        return CPP2_UFCS_TEMPLATE_ARGS((), (cpp2_new<regex_token_empty>), "\\G")(cpp2::shared); 
     }
     else {
         return nullptr; 
@@ -12499,11 +12490,11 @@ size_t i{0};
 
     if (ctx.peek() == 'b') {
         static_cast<void>(ctx.next());
-        return CPP2_UFCS_TEMPLATE(cpp2_new<regex_token_check>)(cpp2::shared, "\\b", "word_boundary_token_matcher<char, false>"); 
+        return CPP2_UFCS_TEMPLATE_ARGS((), (cpp2_new<regex_token_check>), "\\b", "word_boundary_token_matcher<char, false>")(cpp2::shared); 
     }
     else {if (ctx.peek() == 'B') {
         static_cast<void>(ctx.next());
-        return CPP2_UFCS_TEMPLATE(cpp2_new<regex_token_check>)(cpp2::shared, "\\B", "word_boundary_token_matcher<char, true>"); 
+        return CPP2_UFCS_TEMPLATE_ARGS((), (cpp2_new<regex_token_check>), "\\B", "word_boundary_token_matcher<char, true>")(cpp2::shared); 
     }
     else {
         return nullptr; 
@@ -12558,7 +12549,7 @@ size_t i{0};
     template <typename Error_out> auto regex_generator<Error_out>::extract_modifiers() & -> void
     {
         if (regex.find_first_of("'/") == 0) {
-            char mod_token {CPP2_ASSERT_IN_BOUNDS_LITERAL(regex, 0)}; 
+            char mod_token {CPP2_ASSERT_IN_BOUNDS_LITERAL((regex), 0)}; 
 
             auto end_pos {regex.rfind(mod_token)}; 
             if (end_pos != 0) {
@@ -12594,19 +12585,19 @@ auto regex_gen(meta::type_declaration& t) -> void
         if (CPP2_UFCS(starts_with)(name, prefix) || name == exact_name) 
         {
             if (!(CPP2_UFCS(has_initializer)(m))) {
-                CPP2_UFCS(error)(t, "Regular expression must have an initializer.");
+                CPP2_UFCS_ARGS((), (error), "Regular expression must have an initializer.")(t);
             }
             CPP2_UFCS(mark_for_removal_from_enclosing_type)(m);
 
             if (name == exact_name) {
                 if (has_default) {
-                    CPP2_UFCS(error)(t, "Type can only contain one default named regular expression.");
+                    CPP2_UFCS_ARGS((), (error), "Type can only contain one default named regular expression.")(t);
                 }
                 has_default = true;
             }
 
             std::string expr {CPP2_UFCS(initializer)(m)}; 
-            if (CPP2_UFCS(starts_with)(expr, "R\"(") && CPP2_UFCS(ends_with)(expr, ")\"")) {
+            if (CPP2_UFCS_ARGS((), (starts_with), "R\"(")(expr) && CPP2_UFCS_ARGS((), (ends_with), ")\"")(expr)) {
                 expr = CPP2_UFCS(substr)(expr, 3, CPP2_UFCS(size)(expr) - 5);
             }
             else {if (string_util::is_escaped(expr)) {
@@ -12616,7 +12607,7 @@ auto regex_gen(meta::type_declaration& t) -> void
                 CPP2_UFCS(error)(t, "Unknown string format '" + cpp2::to_string(expr) + "'");
             }}
 
-            CPP2_ASSERT_IN_BOUNDS(expressions, name) = cpp2::move(expr);
+            CPP2_ASSERT_IN_BOUNDS((expressions), name) = cpp2::move(expr);
         }
     }
 
@@ -12631,7 +12622,7 @@ auto regex_gen(meta::type_declaration& t) -> void
         }
     }
 
-    CPP2_UFCS(add_runtime_support_include)(t, "cpp2regex.h");
+    CPP2_UFCS_ARGS((), (add_runtime_support_include), "cpp2regex.h")(t);
 }
 
 #line 8613 "reflect.h2"
@@ -12650,11 +12641,9 @@ auto regex_gen(meta::type_declaration& t) -> void
         for ( 
               auto const& m : CPP2_UFCS(get_members)(rtype) ) 
         {
-            CPP2_UFCS(require)(m, 
-                !(CPP2_UFCS(starts_with)(CPP2_UFCS(name)(m), "_")) || CPP2_UFCS(ssize)(CPP2_UFCS(name)(m)) == 1, 
-                "a type that applies a metafunction cannot have a body that declares "
-                "a name that starts with '_' - those names are reserved for the "
-                "metafunction implementation"
+            CPP2_UFCS_ARGS((, auto&& cpp2_ufcs_a0), (require), CPP2_FORWARD(cpp2_ufcs_a0), "a type that applies a metafunction cannot have a body that declares ""a name that starts with '_' - those names are reserved for the ""metafunction implementation")(m, !(CPP2_UFCS_ARGS((), (starts_with), "_")(CPP2_UFCS(name)(m))) || CPP2_UFCS(ssize)(CPP2_UFCS(name)(m)) == 1
+
+#line 8633 "reflect.h2"
             );
         }
     }

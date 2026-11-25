@@ -33,7 +33,7 @@ template<typename R, int dim> class taylor {
     public: std::array<R,dim> v {}; 
 
     public: explicit taylor();
-    public: taylor(R const& d1);
+    public: explicit taylor(R const& d1);
 #line 10 "cpp2taylor.h2"
     public: auto operator=(R const& d1) -> taylor& ;
 
@@ -46,7 +46,7 @@ template<typename R, int dim> class taylor {
 #line 14 "cpp2taylor.h2"
     public: auto operator=(taylor&& that) noexcept -> taylor& ;
 
-    public: taylor(std::initializer_list<R> const& l);
+    public: explicit taylor(std::initializer_list<R> const& l);
 #line 16 "cpp2taylor.h2"
     public: auto operator=(std::initializer_list<R> const& l) -> taylor& ;
 
@@ -142,14 +142,14 @@ namespace cpp2 {
         : v{  }{
 
 #line 12 "cpp2taylor.h2"
-        CPP2_ASSERT_IN_BOUNDS_LITERAL(v, 0) = d1;
+        CPP2_ASSERT_IN_BOUNDS_LITERAL((v), 0) = d1;
     }
 #line 10 "cpp2taylor.h2"
     template <typename R, int dim> auto taylor<R,dim>::operator=(R const& d1) -> taylor& {
         v = {};
 
 #line 12 "cpp2taylor.h2"
-        CPP2_ASSERT_IN_BOUNDS_LITERAL(v, 0) = d1;
+        CPP2_ASSERT_IN_BOUNDS_LITERAL((v), 0) = d1;
         return *this;
 #line 13 "cpp2taylor.h2"
     }
@@ -198,7 +198,7 @@ auto i{1};
 #line 25 "cpp2taylor.h2"
     template <typename R, int dim> [[nodiscard]] auto taylor<R,dim>::operator[](cpp2::impl::in<int> k) const& -> R{
         if (cpp2::cpp2_default.is_active() && !([_0 = 1, _1 = k, _2 = dim]{ return cpp2::impl::cmp_less_eq(_0,_1) && cpp2::impl::cmp_less_eq(_1,_2); }()) ) { cpp2::cpp2_default.report_violation(""); }
-        R r {CPP2_ASSERT_IN_BOUNDS(v, k - 1)}; 
+        R r {CPP2_ASSERT_IN_BOUNDS((v), k - 1)}; 
 {
 auto i{2};
 
@@ -214,13 +214,13 @@ auto i{2};
 #line 35 "cpp2taylor.h2"
     template <typename R, int dim> auto taylor<R,dim>::set(cpp2::impl::in<int> k, cpp2::impl::in<R> value) & -> void{
         if (cpp2::cpp2_default.is_active() && !([_0 = 1, _1 = k, _2 = dim]{ return cpp2::impl::cmp_less_eq(_0,_1) && cpp2::impl::cmp_less_eq(_1,_2); }()) ) { cpp2::cpp2_default.report_violation(""); }
-        CPP2_ASSERT_IN_BOUNDS(v, k - 1) = value;
+        CPP2_ASSERT_IN_BOUNDS((v), k - 1) = value;
 {
 auto i{2};
 
 #line 40 "cpp2taylor.h2"
         for( ; cpp2::impl::cmp_less_eq(i,k); i += 1 ) {
-            CPP2_ASSERT_IN_BOUNDS(v, k - 1) /= CPP2_ASSERT_NOT_ZERO(CPP2_TYPEOF(CPP2_ASSERT_IN_BOUNDS(v, k - 1)),i);
+            CPP2_ASSERT_IN_BOUNDS((v), k - 1) /= CPP2_ASSERT_NOT_ZERO(CPP2_TYPEOF(CPP2_ASSERT_IN_BOUNDS((v), k - 1)),i);
         }
 }
 #line 43 "cpp2taylor.h2"
@@ -235,7 +235,7 @@ auto i{2};
             return 0.0; 
         }}
 
-        return CPP2_ASSERT_IN_BOUNDS(v, i - 1); 
+        return CPP2_ASSERT_IN_BOUNDS((v), i - 1); 
     }
 
 #line 59 "cpp2taylor.h2"
@@ -273,7 +273,7 @@ auto k{1};
 
 #line 90 "cpp2taylor.h2"
         for( ; cpp2::impl::cmp_less_eq(k,dim); k += 1 ) {
-            CPP2_ASSERT_IN_BOUNDS(r.v, k - 1) = -CPP2_ASSERT_IN_BOUNDS(v, k - 1);
+            CPP2_ASSERT_IN_BOUNDS((r.v), k - 1) = -CPP2_ASSERT_IN_BOUNDS((v), k - 1);
         }
 }
 
@@ -289,7 +289,7 @@ auto k{1};
 
 #line 101 "cpp2taylor.h2"
         for( ; cpp2::impl::cmp_less_eq(k,dim); k += 1 ) {
-            CPP2_ASSERT_IN_BOUNDS(r.v, k - 1) = get(k, v0) + CPP2_UFCS(get)(o, k, o0);
+            CPP2_ASSERT_IN_BOUNDS((r.v), k - 1) = get(k, v0) + CPP2_UFCS(get)(o, k, o0);
         }
 }
 
@@ -305,7 +305,7 @@ auto k{1};
 
 #line 112 "cpp2taylor.h2"
         for( ; cpp2::impl::cmp_less_eq(k,dim); k += 1 ) {
-            CPP2_ASSERT_IN_BOUNDS(r.v, k - 1) = get(k, v0) - CPP2_UFCS(get)(o, k, o0);
+            CPP2_ASSERT_IN_BOUNDS((r.v), k - 1) = get(k, v0) - CPP2_UFCS(get)(o, k, o0);
         }
 }
 
@@ -327,7 +327,7 @@ auto j{0};
 
 #line 126 "cpp2taylor.h2"
             for( ; cpp2::impl::cmp_less_eq(j,k); j += 1 ) {
-                CPP2_ASSERT_IN_BOUNDS(r.v, k - 1) += get(j, v0) * o.get(k - j, o0);
+                CPP2_ASSERT_IN_BOUNDS((r.v), k - 1) += get(j, v0) * o.get(k - j, o0);
             }
 }
 #line 129 "cpp2taylor.h2"
@@ -348,17 +348,17 @@ auto k{1};
 
 #line 140 "cpp2taylor.h2"
         for( ; cpp2::impl::cmp_less_eq(k,dim); k += 1 ) {
-            CPP2_ASSERT_IN_BOUNDS(r.v, k - 1) = get(k, v0);
+            CPP2_ASSERT_IN_BOUNDS((r.v), k - 1) = get(k, v0);
 {
 auto j{0};
 
 #line 143 "cpp2taylor.h2"
             for( ; cpp2::impl::cmp_less(j,k); j += 1 ) {
-                CPP2_ASSERT_IN_BOUNDS(r.v, k - 1) -= CPP2_UFCS(get)(r, j, r0) * o.get(k - j, o0);
+                CPP2_ASSERT_IN_BOUNDS((r.v), k - 1) -= CPP2_UFCS(get)(r, j, r0) * o.get(k - j, o0);
             }
 }
 #line 146 "cpp2taylor.h2"
-            CPP2_ASSERT_IN_BOUNDS(r.v, k - 1) *= factor;
+            CPP2_ASSERT_IN_BOUNDS((r.v), k - 1) *= factor;
         }
 }
 #line 148 "cpp2taylor.h2"
@@ -376,17 +376,17 @@ auto k{1};
 
 #line 158 "cpp2taylor.h2"
         for( ; cpp2::impl::cmp_less_eq(k,dim); k += 1 ) {
-            CPP2_ASSERT_IN_BOUNDS(r.v, k - 1) = get(k, v0);
+            CPP2_ASSERT_IN_BOUNDS((r.v), k - 1) = get(k, v0);
 {
 auto j{1};
 
 #line 161 "cpp2taylor.h2"
             for( ; cpp2::impl::cmp_less(j,k); j += 1 ) {
-                CPP2_ASSERT_IN_BOUNDS(r.v, k - 1) -= r.get(j, r0) * r.get(k - j, r0);
+                CPP2_ASSERT_IN_BOUNDS((r.v), k - 1) -= r.get(j, r0) * r.get(k - j, r0);
             }
 }
 #line 164 "cpp2taylor.h2"
-            CPP2_ASSERT_IN_BOUNDS(r.v, k - 1) *= factor;
+            CPP2_ASSERT_IN_BOUNDS((r.v), k - 1) *= factor;
         }
 }
 
@@ -405,17 +405,17 @@ auto k{1};
 
 #line 177 "cpp2taylor.h2"
         for( ; cpp2::impl::cmp_less_eq(k,dim); k += 1 ) {
-            CPP2_ASSERT_IN_BOUNDS(r.v, k - 1) = k * get(k, v0);
+            CPP2_ASSERT_IN_BOUNDS((r.v), k - 1) = k * get(k, v0);
 {
 auto j{1};
 
 #line 180 "cpp2taylor.h2"
             for( ; cpp2::impl::cmp_less(j,k); j += 1 ) {
-                CPP2_ASSERT_IN_BOUNDS(r.v, k - 1) -= j * get(k - j, v0) * r.get(j, r0);
+                CPP2_ASSERT_IN_BOUNDS((r.v), k - 1) -= j * get(k - j, v0) * r.get(j, r0);
             }
 }
 #line 183 "cpp2taylor.h2"
-            CPP2_ASSERT_IN_BOUNDS(r.v, k - 1) *= factor / CPP2_ASSERT_NOT_ZERO(CPP2_TYPEOF(factor),k);
+            CPP2_ASSERT_IN_BOUNDS((r.v), k - 1) *= factor / CPP2_ASSERT_NOT_ZERO(CPP2_TYPEOF(factor),k);
         }
 }
 
@@ -439,11 +439,11 @@ auto j{1};
 
 #line 198 "cpp2taylor.h2"
             for( ; cpp2::impl::cmp_less_eq(j,k); j += 1 ) {
-                CPP2_ASSERT_IN_BOUNDS(r.v, k - 1) += j * r.get(k - j, r0) * get(j, v0);
+                CPP2_ASSERT_IN_BOUNDS((r.v), k - 1) += j * r.get(k - j, r0) * get(j, v0);
             }
 }
 #line 201 "cpp2taylor.h2"
-            CPP2_ASSERT_IN_BOUNDS(r.v, k - 1) /= CPP2_ASSERT_NOT_ZERO(CPP2_TYPEOF(CPP2_ASSERT_IN_BOUNDS(r.v, k - 1)),k);
+            CPP2_ASSERT_IN_BOUNDS((r.v), k - 1) /= CPP2_ASSERT_NOT_ZERO(CPP2_TYPEOF(CPP2_ASSERT_IN_BOUNDS((r.v), k - 1)),k);
         }
 }
 
@@ -465,13 +465,13 @@ auto j{1};
 
 #line 215 "cpp2taylor.h2"
             for( ; cpp2::impl::cmp_less_eq(j,k); j += 1 ) {
-                CPP2_ASSERT_IN_BOUNDS(s.v, k - 1) += j * u.get(j, u0) * c.get(k - j, c0);
-                CPP2_ASSERT_IN_BOUNDS(c.v, k - 1) -= j * u.get(j, u0) * s.get(k - j, s0);
+                CPP2_ASSERT_IN_BOUNDS((s.v), k - 1) += j * u.get(j, u0) * c.get(k - j, c0);
+                CPP2_ASSERT_IN_BOUNDS((c.v), k - 1) -= j * u.get(j, u0) * s.get(k - j, s0);
             }
 }
 #line 219 "cpp2taylor.h2"
-            CPP2_ASSERT_IN_BOUNDS(s.v, k - 1) /= CPP2_ASSERT_NOT_ZERO(CPP2_TYPEOF(CPP2_ASSERT_IN_BOUNDS(s.v, k - 1)),k);
-            CPP2_ASSERT_IN_BOUNDS(c.v, k - 1) /= CPP2_ASSERT_NOT_ZERO(CPP2_TYPEOF(CPP2_ASSERT_IN_BOUNDS(c.v, k - 1)),k);
+            CPP2_ASSERT_IN_BOUNDS((s.v), k - 1) /= CPP2_ASSERT_NOT_ZERO(CPP2_TYPEOF(CPP2_ASSERT_IN_BOUNDS((s.v), k - 1)),k);
+            CPP2_ASSERT_IN_BOUNDS((c.v), k - 1) /= CPP2_ASSERT_NOT_ZERO(CPP2_TYPEOF(CPP2_ASSERT_IN_BOUNDS((c.v), k - 1)),k);
         }
 }
 #line 222 "cpp2taylor.h2"
@@ -507,7 +507,7 @@ auto i{1};
 
 #line 249 "cpp2taylor.h2"
     for( ; cpp2::impl::cmp_less_eq(i,order); i += 1 ) {
-        r += " " + cpp2::to_string(CPP2_ASSERT_IN_BOUNDS(o, i)) + "";
+        r += " " + cpp2::to_string(CPP2_ASSERT_IN_BOUNDS((o), i)) + "";
     }
 }
 #line 252 "cpp2taylor.h2"
