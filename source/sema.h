@@ -1020,6 +1020,32 @@ private:
             }
         }
 
+        //  Walking backwards from a use to find the compounds that contain
+        //  it, the end of a compound means an earlier sibling, which contains
+        //  nothing we're looking for: skip to its start. A compound's end is
+        //  one level deeper than its start, and the compounds nested inside
+        //  it are deeper still, so its start is the first compound start one
+        //  level up
+        auto skip_ended_compound = [&]() {
+            assert(
+                std::get_if<symbol::active::compound>(&symbols[i].sym)
+                && !symbols[i].start
+                );
+            auto start_depth = symbols[i].depth - 1;
+            while (
+                i > pos
+                && !(
+                    std::get_if<symbol::active::compound>(&symbols[i].sym)
+                    && symbols[i].start
+                    && symbols[i].depth == start_depth
+                    )
+                )
+            {
+                --i;
+            }
+            assert(i > pos && "A compound that ends after pos starts after it");
+        };
+
         //  i is now at the end of id's scope, so start scanning backwards
         //  until we find the first definite last uses
         --i;
@@ -1042,7 +1068,9 @@ private:
             }
 
             //  If found in a branch and we are at its start,
-            //  pop out of any containing scope of the branch
+            //  pop out of any containing scope of the branch.
+            //  A plain block containing the branch doesn't end the branch's
+            //  search, any more than the function body does, so pop past it
             if (compound_sym const* comp = nullptr;
                 branch_depth != 0
                 && (comp = std::get_if<symbol::active::compound>(&symbols[i].sym))
@@ -1054,10 +1082,15 @@ private:
                     i > pos
                     && (
                         !(comp = std::get_if<symbol::active::compound>(&symbols[i].sym))
+                        || comp->kind_ == compound_sym::is_scope
                         || branch_depth <= symbols[i].depth
+                        || !symbols[i].start
                         )
                     )
                 {
+                    if (comp && !symbols[i].start) {
+                        skip_ended_compound();
+                    }
                     --i;
                 }
 
@@ -1142,12 +1175,16 @@ private:
                     !(comp = std::get_if<symbol::active::compound>(&symbols[i].sym))
                     || comp->kind_ == compound_sym::is_scope
                     || found_depth <= symbols[i].depth
+                    || !symbols[i].start
                     );
                 --i
                 )
             {
+                if (comp && !symbols[i].start) {
+                    skip_ended_compound();
+                }
             }
-            assert(!comp || symbols[i].start);
+            assert(i <= pos || (comp && symbols[i].start));
 
             //  If found in a branch, record its depth
             if (

@@ -52,7 +52,7 @@ auto main(int const argc_, char** argv_) -> int
     //  ... inside an 'else'
     auto b {std::make_shared<int>(10)}; 
     auto first_b {[_0 = b]() mutable -> int { return *cpp2::impl::assert_not_null(_0);  }}; 
-    auto second_b {[_0 = cpp2::move(no), _1 = cpp2::move(b)]() mutable -> int{if (_0) {return 0; }else {return *cpp2::impl::assert_not_null(_1) + 1; }}}; 
+    auto second_b {[_0 = no, _1 = cpp2::move(b)]() mutable -> int{if (_0) {return 0; }else {return *cpp2::impl::assert_not_null(_1) + 1; }}}; 
     check("b, first", cpp2::move(first_b));
     check("b, second", cpp2::move(second_b));
 

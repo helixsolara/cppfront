@@ -1,0 +1,163 @@
+//  A use inside a branch is a last use only on the paths through that branch,
+//  so a use before the branch isn't a last use: on the path into the branch,
+//  the name is used again. That holds when the branch sits inside a plain
+//  block, or after other compound statements, too
+
+use: (copy p: std::shared_ptr<int>) =
+{
+    std::cout << "use: " << p* << "\n";
+}
+
+is_set: (copy p: std::shared_ptr<int>) -> bool = p != nullptr;
+
+//  A parameter used in a precondition and then only inside a branch: the
+//  function body is a plain block too
+check_then_use: (copy p: std::shared_ptr<int>, flag: bool)
+    pre(is_set(p))
+=
+{
+    if flag
+    {
+        use(p);
+    }
+}
+
+//  A forward parameter, used before a block holding a branch
+forward_then_use: (forward p: std::shared_ptr<int>, flag: bool) =
+{
+    use(p);
+    {
+        if flag
+        {
+            use(p);
+        }
+    }
+}
+
+main: (args) =
+{
+    //  True, but not known to be at compile time
+    yes := args.size() < 100u;
+    no := !yes;
+
+    //  The earlier use comes before a block holding an 'if' that is taken,
+    //  so moving at the earlier use would leave the branch an empty pointer
+    a := std::make_shared<int>(1);
+    use(a);
+    {
+        if yes
+        {
+            use(a);
+        }
+    }
+
+    //  ... holding an 'if' and an 'else'
+    b := std::make_shared<int>(2);
+    use(b);
+    {
+        if yes
+        {
+            use(b);
+        }
+        else
+        {
+            use(b);
+        }
+    }
+
+    //  ... with the use only in the 'else'
+    h := std::make_shared<int>(8);
+    use(h);
+    {
+        if no
+        {
+        }
+        else
+        {
+            use(h);
+        }
+    }
+
+    //  ... in blocks nested twice, after an earlier sibling 'if'
+    c := std::make_shared<int>(3);
+    use(c);
+    if no
+    {
+    }
+    {
+        {
+            if yes
+            {
+                use(c);
+            }
+        }
+    }
+
+    //  An earlier loop, then a block holding an 'if' whose condition holds
+    //  the last use: walking back from that condition passes the loop body's
+    //  end, which used to stop the walk and fail an assertion
+    m := std::make_shared<int>(11);
+    n := 0;
+    while n < 2 next n++
+    {
+        use(m);
+    }
+    {
+        if is_set(m)
+        {
+            std::cout << "m is set\n";
+        }
+    }
+
+    //  ... with a use in the branch too
+    d := std::make_shared<int>(4);
+    i := 0;
+    while i < 2 next i++
+    {
+        use(d);
+    }
+    {
+        if is_set(d)
+        {
+            use(d);
+        }
+    }
+
+    //  ... and the same without the block: the walk used to stop at the
+    //  loop body's start and take the earlier use for a last one
+    k := std::make_shared<int>(9);
+    use(k);
+    j := 0;
+    while j < 1 next j++
+    {
+        std::cout << "loop\n";
+    }
+    if is_set(k)
+    {
+        use(k);
+    }
+
+    //  A capture in the branch
+    e := std::make_shared<int>(5);
+    use(e);
+    {
+        if yes
+        {
+            f := :() -> int = e$*;
+            std::cout << "e: " << f() << "\n";
+        }
+    }
+
+    //  The block holds the only use, after the branch: that one is the last
+    g := std::make_shared<int>(6);
+    {
+        if no
+        {
+            std::cout << "never\n";
+        }
+        use(g);
+    }
+
+    check_then_use(std::make_shared<int>(7), yes);
+    forward_then_use(std::make_shared<int>(10), yes);
+}
