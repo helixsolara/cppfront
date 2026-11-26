@@ -1,0 +1,3 @@
+pure2-export-outside-module-error.cpp2...
+pure2-export-outside-module-error.cpp2(4,8): error: export is only allowed in a module unit (a file starting with 'export module' or 'module')
+

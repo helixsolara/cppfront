@@ -1,0 +1,3 @@
+pure2-module-export-using-in-function-error.cpp2...
+pure2-module-export-using-in-function-error.cpp2(4,12): error: an export declaration is only allowed at namespace scope
+

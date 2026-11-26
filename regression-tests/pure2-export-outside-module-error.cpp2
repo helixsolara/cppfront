@@ -1,0 +1,6 @@
+//  export marks what a module unit gives its importers; a file that is no
+//  module unit has none to give
+
+export f: () -> int = 1;
+
+main: () -> int = f();

@@ -2923,6 +2923,29 @@ public:
 
     auto start(using_statement_node const& n, int) -> void
     {
+        //  An exported using, like an exported declaration, belongs at
+        //  namespace scope: the nearest enclosing declaration (lifetime
+        //  scopes, which a namespace's body opens too, don't count) is a
+        //  namespace, or there is none
+        if (n.export_)
+        {
+            auto enclosing = std::find_if(
+                current_declarations.rbegin(),
+                current_declarations.rend(),
+                [](declaration_sym const* d) { return d != nullptr; }
+                );
+            if (
+                enclosing != current_declarations.rend()
+                && !(*enclosing)->declaration->is_namespace()
+                )
+            {
+                errors.emplace_back(
+                    n.position(),
+                    "an export declaration is only allowed at namespace scope"
+                );
+            }
+        }
+
         if (auto id = get_if<id_expression_node::qualified>(&n.id->id);
             !n.for_namespace()
             && id

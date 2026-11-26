@@ -3419,11 +3419,29 @@ public:
 
 
     //-----------------------------------------------------------------------
+    //  export gives what a module unit offers its importers, so it means
+    //  nothing in a file that is no module unit; called where each export
+    //  is printed, once per declaration
+    //
+    auto report_export_outside_module(source_position pos)
+        -> void
+    {
+        if (!source.is_module()) {
+            errors.emplace_back(
+                pos,
+                "export is only allowed in a module unit (a file starting with 'export module' or 'module')"
+            );
+        }
+    }
+
+
+    //-----------------------------------------------------------------------
     //
     auto emit(using_statement_node const& n)
         -> void
     {   STACKINSTR
         if (n.export_) {
+            report_export_outside_module(n.position());
             printer.print_cpp2("export ", n.position());
         }
 
@@ -7068,6 +7086,7 @@ public:
                     )
                 )
             {
+                report_export_outside_module(n.position());
                 printer.print_cpp2(to_string(n.access) + " ", n.position());
             }
         }

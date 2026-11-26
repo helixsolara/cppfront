@@ -1,0 +1,7 @@
+export module export_using_in_function;
+
+export f: () -> std::size_t = {
+    export using std::string;
+    s: string = "text";
+    return s.size();
+}
