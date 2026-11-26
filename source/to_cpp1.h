@@ -6287,7 +6287,17 @@ public:
                     {
                         auto exprs = (*statement)->get_lhs_rhs_if_simple_assignment();
                         if (exprs.lhs) {
-                            if (auto tok = exprs.lhs->get_first_token_ignoring_this()) {
+                            //  Only a bare name or 'this.name' is assigned
+                            //  itself: 'name*.x = ...' or 'name.x = ...'
+                            //  assigns through it, so it is no initializer
+                            if (auto tok = exprs.lhs->get_first_token_ignoring_this();
+                                tok
+                                && (
+                                    exprs.lhs->ops.empty()
+                                    || tok != exprs.lhs->expr->get_token()
+                                    )
+                                )
+                            {
                                 lhs = *tok;
                             }
                             else {

@@ -1,0 +1,36 @@
+//  A constructor's leading assignments to its members, in order, are their
+//  initializers. An assignment through a member (binding*.kind = 2, which
+//  sets a member of what binding points to) doesn't initialize binding: it
+//  is a statement of the body, run after every member is initialized
+
+settings: @struct type = { kind: int = 0; }
+
+widget: type =
+{
+    binding: std::shared_ptr<settings> = std::make_shared<settings>();
+    count: int = 1;
+
+    //  An assignment through the first member, first
+    operator=: (out this) =
+    {
+        binding*.kind = 2;
+    }
+
+    //  The second member's initializer, then an assignment through the first
+    operator=: (out this, n: int) =
+    {
+        count = n;
+        binding*.kind = n * 2;
+    }
+
+    kind: (this) -> int = binding*.kind;
+    count_of: (this) -> int = count;
+}
+
+main: () =
+{
+    a: widget = ();
+    b: widget = (5);
+    std::cout << "first statement: " << a.kind() << " " << a.count_of() << "\n";
+    std::cout << "after an initializer: " << b.kind() << " " << b.count_of() << "\n";
+}
