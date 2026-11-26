@@ -1,0 +1,23 @@
+//  A postfix * followed by ( is taken for multiplication, as in a*(b),
+//  but nothing is multiplied by an empty (): f*() dereferences f and calls
+//  what it points to, and so does a captured pointer's p$*()
+
+call_through: (f: *std::function<int()>) -> int = f*();
+
+main: () =
+{
+    g: std::function<int()> = :() -> int = { return 42; };
+    std::cout << "through a parameter: " << call_through(g&) << "\n";
+
+    h := g&;
+    k := :() -> int = { return h$*(); };
+    std::cout << "through a capture: " << k() << "\n";
+
+    p := std::make_unique<std::function<int()>>(:() -> int = { return 7; });
+    std::cout << "through a smart pointer: " << p*() << "\n";
+
+    //  With something in the parentheses it is still multiplication
+    a := 6;
+    b := 7;
+    std::cout << "multiplication: " << a*(b) << "\n";
+}

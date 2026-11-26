@@ -4323,6 +4323,10 @@ public:
                 || i->op->type() == lexeme::Tilde
                 )
             {
+                //  A call after the operator applies to its result, as in
+                //  f*(), so its arguments go outside it
+                flush_args();
+
                 // omit some needless parens
                 if (
                     !last_was_prefixed

@@ -7077,7 +7077,16 @@ private:
                 )
             )
         {
-            //  * and & can't be unary operators if followed by a (, identifier, or literal
+            //  * and & can't be unary operators if followed by a (, identifier, or literal,
+            //  except that nothing is multiplied by an empty (): f*() dereferences f and
+            //  calls the result
+            auto deref_then_call =
+                curr().type() == lexeme::Multiply
+                && peek(1)
+                && peek(1)->type() == lexeme::LeftParen
+                && peek(2)
+                && peek(2)->type() == lexeme::RightParen
+                ;
             if (
                 (
                     curr().type() == lexeme::Multiply
@@ -7089,6 +7098,7 @@ private:
                     || peek(1)->type() == lexeme::Identifier
                     || is_literal(peek(1)->type())
                     )
+                && !deref_then_call
                 )
             {
                 break;
