@@ -2887,22 +2887,27 @@ public:
                     use.function_expression = function_expressions.back();
                     this->push_use( use );
                 };
-                if (accessed_member_for_ufcs) {
-                    if (t == "(") {
-                        push_use(accessed_member_for_ufcs, true);
-                    }
+                //  A member named like a local is a UFCS use of that local
+                //  only if a call follows it. Any other token ends the member
+                //  access and starts what comes next, which may itself be a
+                //  use (r.x, then v in v.go()), so it is still looked up
+                if (accessed_member_for_ufcs && t == "(") {
+                    push_use(accessed_member_for_ufcs, true);
                     accessed_member_for_ufcs = nullptr;
                 }
-                else if (auto decl = get_declaration_of(t, false, !started_this_member_access);
-                    decl
-                    && decl->declaration->name() != &t
-                    )
-                {
-                    if (!started_member_access) {
-                        push_use(&t);
-                    }
-                    else {
-                        accessed_member_for_ufcs = &t;
+                else {
+                    accessed_member_for_ufcs = nullptr;
+                    if (auto decl = get_declaration_of(t, false, !started_this_member_access);
+                        decl
+                        && decl->declaration->name() != &t
+                        )
+                    {
+                        if (!started_member_access) {
+                            push_use(&t);
+                        }
+                        else {
+                            accessed_member_for_ufcs = &t;
+                        }
                     }
                 }
             }

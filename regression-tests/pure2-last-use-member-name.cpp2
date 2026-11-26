@@ -1,0 +1,30 @@
+//  A member access whose member is named like a local in scope (r.x with a
+//  local x) may be a UFCS call, x(r), until the next token shows it isn't.
+//  That token starts what comes next, and still counts as a use when it
+//  names a local: here v, whose use in v.size() right after r.x makes
+//  take(v) not its last use, so v isn't moved there
+
+take: (copy s: std::string) -> std::size_t = s.size();
+
+show: (label: std::string_view, a: int, b: std::size_t, c: std::size_t) =
+{
+    std::cout << label << ": " << a << " " << b << " " << c << "\n";
+}
+
+point: @struct type = { x: int = 1; y: int = 2; }
+
+main: () =
+{
+    //  A member named like a local, then at once a use of another local
+    v: std::string = "hello";
+    r: point = ();
+    n := take(v);
+    x := r.x;
+    size := v.size();
+    show("next statement", x, size, n);
+
+    //  ... the member and the use as two arguments of one call
+    w: std::string = "world!";
+    m := take(w);
+    show("next argument", r.x, w.size(), m);
+}
